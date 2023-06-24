@@ -62,4 +62,6 @@ jobs:
       run: chmod +x ./puzzlingServer/gradlew
       
     - name: Build with Gradle # 실제 application build(-x 옵션을 통해 test는 제외)
-      run: ./puzzlingServer/gradlew build -x test
+      run: |
+        cd ./puzzlingServer
+        ./gradlew build -x test
