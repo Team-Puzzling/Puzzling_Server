@@ -1,4 +1,4 @@
-package com.puzzling.puzzlingServer.global.infra;
+package com.puzzling.puzzlingServer.global.api;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.env.Environment;
