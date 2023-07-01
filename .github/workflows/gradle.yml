@@ -74,15 +74,15 @@ jobs:
     - name: Copy Jar
       run: |
         echo "Current directory: $PWD" 
-        cp ./build/libs/*.jar ./deploy
+        cp ./puzzlingServer/build/libs/*.jar ./deploy
     
     # appspec.yml 파일 복사
     - name: Copy appspec.yml
-      run: cp appspec.yml ./deploy
+      run: cp ./puzzlingServer/appspec.yml ./deploy
 
     # script files 복사
     - name: Copy script
-      run: cp ./scripts/*.sh ./deploy
+      run: cp ./puzzlingServer/scripts/*.sh ./deploy
       
     - name: Make zip file
       run: zip -r ./puzzling_server.zip ./deploy
