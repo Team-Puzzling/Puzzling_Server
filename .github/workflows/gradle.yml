@@ -96,7 +96,7 @@ jobs:
         aws-region: ap-northeast-2
         
     - name: Upload to S3
-      run: aws s3 cp --region ap-northeast-2 ./puzzling_server.zip s3://$S3_BUCKET_NAME/
+      run: aws s3 cp --region ap-northeast-2 ./puzzling_server.zip s3://${{ secrets.AWS_S3_BUCKET_NAME }}/
       
     # Deploy
     - name: Deploy
@@ -108,5 +108,5 @@ jobs:
         --application-name puzzling-server-codedeploy
         --deployment-group-name puzzling-server-codedeploy-group
         --file-exists-behavior OVERWRITE 
-        --s3-location bucket=puzzlingbucket,bundleType=zip,key=puzzling_server.zip
+        --s3-location bucket=${{ secrets.AWS_S3_BUCKET_NAME }},bundleType=zip,key=puzzling_server.zip
         --region ap-northeast-2
