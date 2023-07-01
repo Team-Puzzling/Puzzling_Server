@@ -54,15 +54,15 @@ sleep 10
 
 for retry_count in {1..10}
 do
-  response=$(curl -s http://localhost:$IDLE_PORT/actuator/health)
-  up_count=$(echo $response | grep 'UP' | wc -l)
+  response=$(curl -s http://localhost:$IDLE_PORT/health)
+  up_count=$(echo $response | grep 'OK' | wc -l)
 
   if [ $up_count -ge 1 ]
-  then # $up_count >= 1 ("UP" 문자열이 있는지 검증)
+  then # $up_count >= 1 ("OK" 문자열이 있는지 검증)
       echo "> Health check 성공"
       break
   else
-      echo "> Health check의 응답을 알 수 없거나 혹은 status가 UP이 아닙니다."
+      echo "> Health check의 응답을 알 수 없거나 혹은 status가 OK가 아닙니다."
       echo "> Health check: ${response}"
   fi
 
