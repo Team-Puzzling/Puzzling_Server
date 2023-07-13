@@ -78,10 +78,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public AuthTokenResponseDto getNewToken(String accessToken, String refreshToken) {
-        return AuthTokenResponseDto.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return AuthTokenResponseDto.of(accessToken,refreshToken);
     }
 
     private Member findMemberBySocialId(String socialId) {
