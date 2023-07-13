@@ -1,10 +1,9 @@
 package com.puzzling.puzzlingServer.api.project.service.Impl;
 
-import com.puzzling.puzzlingServer.api.project.ProjectRepository;
+import com.puzzling.puzzlingServer.api.project.repository.ProjectRepository;
 import com.puzzling.puzzlingServer.api.project.domain.Project;
 import com.puzzling.puzzlingServer.api.project.dto.response.ProjectVerifyResponseDto;
 import com.puzzling.puzzlingServer.api.project.service.ProjectService;
-import com.puzzling.puzzlingServer.common.exception.BadRequestException;
 import com.puzzling.puzzlingServer.common.exception.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

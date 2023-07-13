@@ -1,4 +1,4 @@
-package com.puzzling.puzzlingServer.api.project;
+package com.puzzling.puzzlingServer.api.project.repository;
 
 import com.puzzling.puzzlingServer.api.project.domain.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
