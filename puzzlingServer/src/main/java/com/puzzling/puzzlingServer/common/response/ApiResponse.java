@@ -1,8 +1,13 @@
 package com.puzzling.puzzlingServer.common.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
+import lombok.Getter;
 
 @Builder
+@Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
     private final int status;
@@ -10,11 +15,11 @@ public class ApiResponse<T> {
     private final String message;
     private T data;
 
-    public static ApiResponse success(int status, String message, Object data) {
+    public static ApiResponse success(SuccessStatus status, Object data) {
             return ApiResponse.builder()
-            .status(status)
+            .status(status.getStatusCode())
             .success(true)
-            .message(message)
+            .message(status.getMessage())
             .data(data)
             .build();
             }
