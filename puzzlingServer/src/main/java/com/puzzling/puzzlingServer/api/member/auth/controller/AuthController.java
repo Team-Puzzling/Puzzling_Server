@@ -27,10 +27,8 @@ public class AuthController {
     public ApiResponse<AuthResponseDto> socialLogin(@RequestHeader("Authorization") String socialAccessToken, @RequestBody AuthRequestDto authRequestDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         AuthResponseDto responseDto = authService.socialLogin(socialAccessToken, authRequestDto);
-        System.out.println("=========예슬아 살려줘2");
         // 로그인
         if (!responseDto.getIsNewUser()) {
-            System.out.println("=========예슬아 살려줘");
             return ApiResponse.success(SuccessStatus.SIGNIN_SUCCESS, responseDto);
         }
 

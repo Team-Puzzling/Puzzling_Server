@@ -53,24 +53,12 @@ public class AuthServiceImpl implements AuthService {
                     .name(socialData.getNickname())
                     .socialPlatform(socialPlatform)
                     .socialId(socialData.getId())
-                    .refreshToken(refreshToken)
                     .build();
 
             memberRepository.save(member);
 
-//            Member signedMember = findMemberBySocialId(socialId);
-//            Long projectId = projectRepository.findMostRecentProjectIdByMemberId(signedMember.getId());
-//            Authentication authentication = new UserAuthentication(signedMember.getId(), null, null);
-//            String accessToken = jwtTokenProvider.generateAccessToken(authentication);
+            member.updateRefreshToken(refreshToken);
 
-//            return AuthResponseDto.builder()
-//                    .name(nickname)
-//                    .memberId(signedMember.getId())
-//                    .projectId(projectId)
-//                    .accessToken(accessToken)
-//                    .refreshToken(refreshToken)
-//                    .isNewUser(!isExistUser)
-//                    .build();
         }
         else findMemberBySocialId(socialData.getId()).updateRefreshToken(refreshToken);
 
@@ -82,9 +70,7 @@ public class AuthServiceImpl implements AuthService {
         String accessToken = jwtTokenProvider.generateAccessToken(authentication);
 
         String name = signedMember.getName();
-        System.out.println("========================예슬아 살려줘3");
         List<UserProject> userProjectList = userProjectRepository.findByMemberIdOrderByCreatedAtDesc(signedMember.getId());
-        System.out.println("========================예슬아 살려줘4");
 
         return AuthResponseDto.of(name, signedMember.getId(), userProjectList.get(0).getProject().getId(),
                 accessToken, refreshToken, !isExistUser);

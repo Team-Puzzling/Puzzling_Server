@@ -3,7 +3,6 @@ package com.puzzling.puzzlingServer.api.member.auth.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.nimbusds.jose.shaded.json.JSONArray;
 import com.puzzling.puzzlingServer.api.member.auth.dto.SocialInfoDto;
 import com.puzzling.puzzlingServer.common.exception.BaseException;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class KakaoAuthService  {
             RestTemplate restTemplate = new RestTemplate();
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization", socialAccessToken);
-            HttpEntity<JSONArray> httpEntity = new HttpEntity<>(headers);
+            HttpEntity<JsonNode> httpEntity = new HttpEntity<>(headers);
             ResponseEntity<String> responseData = restTemplate.postForEntity("https://kapi.kakao.com/v2/user/me", httpEntity, String.class);
             ObjectMapper objectMapper = new ObjectMapper();
 
