@@ -29,9 +29,8 @@ public class UserProject extends BaseTimeEntity {
     @Column(name = "leader_or_not", nullable = false)
     private Boolean leaderOrNot;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "previous_template_id")
-    private ReviewTemplate reviewTemplate;
+    @Column(name = "previous_template_id")
+    private Long reviewTemplateId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
@@ -42,12 +41,12 @@ public class UserProject extends BaseTimeEntity {
     private Project project;
 
     @Builder
-    public UserProject(String role, String nickname, Boolean leaderOrNot, ReviewTemplate reviewTemplate,
+    public UserProject(String role, String nickname, Boolean leaderOrNot, Long reviewTemplateId,
                        Member member, Project project) {
         this.role = role;
         this.nickname = nickname;
         this.leaderOrNot = leaderOrNot;
-        this.reviewTemplate = reviewTemplate;
+        this.reviewTemplateId = reviewTemplateId;
         this.member = member;
         this.project = project;
     }
