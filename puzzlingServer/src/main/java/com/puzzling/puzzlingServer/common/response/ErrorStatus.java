@@ -31,6 +31,7 @@ public enum ErrorStatus {
      * 404 NOT_FOUND
      */
     NOT_FOUND_PROJECT_CODE("유효하지 않은 초대코드에요. 코드를 확인해 주세요."),
+    NOT_FOUND_PROJECT("해당하는 프로젝트가 없습니다"),
 
 
     /**
