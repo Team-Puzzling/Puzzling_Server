@@ -17,16 +17,6 @@ import java.util.stream.Collectors;
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewTemplateRepository reviewTemplateRepository;
 
-    //@Override
-    //@Transactional
-    //public List<ReviewTemplateGetResponseDto> getReviewTemplateAll() {
-    //    List<ReviewTemplate> reviewTemplates = reviewTemplateRepository.findAll();
-    //    return reviewTemplates.stream()
-    //            .flatMap(reviewTemplate -> reviewTemplateRepository.findAll())
-    //            .map(reviewTemplate -> ReviewTemplateGetResponseDto.of(reviewTemplate))
-    //            .collect(Collectors.toList());
-    //
-    //}
     @Override
     @Transactional
     public List<ReviewTemplateGetResponseDto> getReviewTemplateAll() {
