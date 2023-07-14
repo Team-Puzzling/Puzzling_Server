@@ -5,13 +5,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.puzzling.puzzlingServer.api.member.auth.dto.SocialInfoDto;
 import com.puzzling.puzzlingServer.common.exception.BaseException;
-import com.puzzling.puzzlingServer.common.exception.UnAuthorizedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import static com.puzzling.puzzlingServer.common.response.ErrorStatus.KAKAO_UNAUTHORIZED_USER;
 
 @RequiredArgsConstructor
 @Component
