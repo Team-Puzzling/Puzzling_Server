@@ -25,4 +25,9 @@ public class ControllerExceptionAdvice {
                         ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage()));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ApiResponse>  handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.fail(HttpStatus.BAD_REQUEST.value(), ex.getMessage()));
+    }
 }
