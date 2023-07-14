@@ -1,6 +1,5 @@
 package com.puzzling.puzzlingServer.api.member.auth.dto.Response;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

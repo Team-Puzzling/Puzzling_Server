@@ -1,6 +1,5 @@
 package com.puzzling.puzzlingServer.api.member.auth.dto.Request;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

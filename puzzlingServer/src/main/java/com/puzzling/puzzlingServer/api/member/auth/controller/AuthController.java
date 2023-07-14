@@ -22,7 +22,6 @@ public class AuthController {
     private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    //RequestHeader에 토큰, RequestBody로는 AuthRequestDto로 설정
     @PostMapping()
     public ApiResponse<AuthResponseDto> socialLogin(@RequestHeader("Authorization") String socialAccessToken, @RequestBody AuthRequestDto authRequestDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
 

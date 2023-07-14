@@ -3,7 +3,6 @@ package com.puzzling.puzzlingServer.common.config.jwt;
 import com.auth0.jwt.JWT;
 import com.puzzling.puzzlingServer.api.member.repository.MemberRepository;
 import com.puzzling.puzzlingServer.common.exception.BadRequestException;
-import com.puzzling.puzzlingServer.common.exception.BaseException;
 import com.puzzling.puzzlingServer.common.response.ErrorStatus;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

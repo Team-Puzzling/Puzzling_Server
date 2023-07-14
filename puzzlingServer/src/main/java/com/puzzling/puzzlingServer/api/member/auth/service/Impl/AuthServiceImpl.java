@@ -31,15 +31,15 @@ public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoAuthService kakaoAuthService;
     private final MemberRepository memberRepository;
-
     private final UserProjectRepository userProjectRepository;
 
     @Override
     public AuthResponseDto socialLogin(String socialAccessToken, AuthRequestDto authRequestDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
-        //여기서는 email로 중복처리를 했다. 우리는 social_Id로 진행할 것이다. 그러면 우리는 여기서 social_Id를 가져오는 로직을 만들고
-        //그것을 통해서 boolean isExistUser = iseMemberBySocialId로 만들어야 한다.
-        //그래서 아래 코드가 수정되어야 하는데 방법이 떠오르지 않음
+        if (authRequestDto.getSocialPlatform() == null) {
+            throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
+        }
+
         SocialPlatform socialPlatform = SocialPlatform.valueOf(authRequestDto.getSocialPlatform());
         SocialInfoDto socialData = getSocialData(socialPlatform, socialAccessToken);
 
@@ -91,11 +91,12 @@ public class AuthServiceImpl implements AuthService {
     }
 
     private SocialInfoDto getSocialData(SocialPlatform socialPlatform, String socialAccessToken) throws NoSuchAlgorithmException, InvalidKeySpecException {
+
         switch (socialPlatform) {
             case KAKAO:
                 return kakaoAuthService.login(socialAccessToken);
             default:
-                throw new IllegalArgumentException("소셜 타입이 잘못되었습니다");
+                throw new IllegalArgumentException(ErrorStatus.ANOTHER_ACCESS_TOKEN.getMessage());
         }
     }
 }

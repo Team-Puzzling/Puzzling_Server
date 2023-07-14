@@ -8,7 +8,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import com.puzzling.puzzlingServer.common.exception.BaseException;
 import com.puzzling.puzzlingServer.common.response.ErrorStatus;
 
 import javax.servlet.FilterChain;
