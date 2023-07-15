@@ -1,7 +1,12 @@
 package com.puzzling.puzzlingServer.common.util;
 
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Configuration;
+
 import java.security.Principal;
 import java.util.Objects;
+
+@RequiredArgsConstructor
 
 public class MemberUtil {
 

@@ -72,6 +72,10 @@ public class AuthServiceImpl implements AuthService {
         String name = signedMember.getName();
         List<UserProject> userProjectList = userProjectRepository.findByMemberIdOrderByCreatedAtDesc(signedMember.getId());
 
+        if (userProjectList.isEmpty()) {
+            return AuthResponseDto.of(name, signedMember.getId(),null,
+                    accessToken, refreshToken, !isExistUser);
+        }
         return AuthResponseDto.of(name, signedMember.getId(), userProjectList.get(0).getProject().getId(),
                 accessToken, refreshToken, !isExistUser);
     }

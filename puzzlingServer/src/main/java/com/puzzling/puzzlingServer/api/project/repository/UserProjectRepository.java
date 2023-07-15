@@ -10,4 +10,6 @@ public interface UserProjectRepository extends JpaRepository<UserProject, Long> 
     List<UserProject> findAllByMemberIdOrderByCreatedAtDesc(Long memberId);
 
     List<UserProject> findByMemberIdOrderByCreatedAtDesc(Long memberId);
+
+    List<UserProject> findAllByProjectId(Long projectId);
 }
