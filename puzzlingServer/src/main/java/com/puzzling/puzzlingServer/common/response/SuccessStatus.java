@@ -21,11 +21,12 @@ public enum SuccessStatus {
      */
     PROJECT_VERIFY_SUCCESS(HttpStatus.OK, "초대코드 유효성 검사 성공"),
     GET_PROJECT_ALL_SUCCESS(HttpStatus.OK, "진행 중인 프로젝트 리스트 조회 성공"),
+    GET_PROJECT_MY_PUZZLE_SUCCESS(HttpStatus.OK, "개인 대시보드 퍼즐 조회 성공"),
 
     /**
      * review
      */
-    GET_REVIEW_TEMPLATE_SUCCESS(HttpStatus.OK,"회고 템플릿 목록 조회 성공") ;
+    GET_REVIEW_TEMPLATE_SUCCESS(HttpStatus.OK,"회고 템플릿 목록 조회 성공")
     ;
 
     private final HttpStatus httpStatus;

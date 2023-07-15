@@ -26,7 +26,6 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional
 public class AuthServiceImpl implements AuthService {
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoAuthService kakaoAuthService;
@@ -34,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final UserProjectRepository userProjectRepository;
 
     @Override
+    @Transactional
     public AuthResponseDto socialLogin(String socialAccessToken, AuthRequestDto authRequestDto) throws NoSuchAlgorithmException, InvalidKeySpecException {
 
         if (authRequestDto.getSocialPlatform() == null) {
@@ -77,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional
     public AuthTokenResponseDto getNewToken(String accessToken, String refreshToken) {
         return AuthTokenResponseDto.of(accessToken,refreshToken);
     }
