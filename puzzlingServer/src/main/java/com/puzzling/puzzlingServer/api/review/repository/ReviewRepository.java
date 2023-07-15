@@ -1,6 +1,8 @@
 package com.puzzling.puzzlingServer.api.review.repository;
 
 import com.puzzling.puzzlingServer.api.review.domain.Review;
+import org.springframework.data.jpa.repository.JpaRepository;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
