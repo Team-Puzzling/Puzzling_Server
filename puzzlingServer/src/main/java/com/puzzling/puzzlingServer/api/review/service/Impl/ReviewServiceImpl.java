@@ -3,12 +3,15 @@ package com.puzzling.puzzlingServer.api.review.service.Impl;
 import com.puzzling.puzzlingServer.api.project.domain.UserProject;
 import com.puzzling.puzzlingServer.api.project.repository.UserProjectRepository;
 import com.puzzling.puzzlingServer.api.review.domain.Review;
+import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
+import com.puzzling.puzzlingServer.api.template.Repository.Review5FRepository;
 import com.puzzling.puzzlingServer.api.template.Repository.ReviewTILRepository;
 import com.puzzling.puzzlingServer.api.template.Repository.ReviewTemplateRepository;
+import com.puzzling.puzzlingServer.api.template.domain.Review5F;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTIL;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTemplate;
 import com.puzzling.puzzlingServer.common.exception.BadRequestException;
@@ -27,6 +30,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewTemplateRepository reviewTemplateRepository;
     private final UserProjectRepository userProjectRepository;
     private final ReviewTILRepository reviewTILRepository;
+    private final Review5FRepository review5FRepository;
     private final ReviewRepository reviewRepository;
     @Override
     @Transactional
@@ -67,6 +71,39 @@ public class ReviewServiceImpl implements ReviewService {
                 .build();
         reviewTILRepository.save(reviewTIL);
     }
+
+    @Override
+    @Transactional
+    public void createReview5F(Long memberId, Long projectId, Review5FRequestDto review5FRequestDto) {
+        UserProject userProject = userProjectRepository.findByMemberIdAndProjectId(memberId,projectId);
+
+        if ( review5FRequestDto.getReviewTemplateId() == null ) {
+            throw new BadRequestException("공백일 수 없습니다. (reviewTemplateId)");
+        }
+        ReviewTemplate reviewTemplate = findReviewTemplateById(review5FRequestDto.getReviewTemplateId());
+
+        userProject.updatePreviousTemplateId(review5FRequestDto.getReviewTemplateId());
+
+        Review review = Review.builder()
+                .userProject(userProject)
+                .reviewTemplate(reviewTemplate)
+                .reviewDate("123")
+                .memberId(memberId)
+                .projectId(projectId)
+                .build();
+        Review savedReview = reviewRepository.save(review);
+
+        Review5F review5F = Review5F.builder()
+                .review(savedReview)
+                .fact(review5FRequestDto.getFact())
+                .feeling(review5FRequestDto.getFeeling())
+                .finding(review5FRequestDto.getFinding())
+                .feedback(review5FRequestDto.getFeedback())
+                .actionPlan(review5FRequestDto.getActionPlan())
+                .build();
+        review5FRepository.save(review5F);
+    }
+
 
     private ReviewTemplate findReviewTemplateById (Long reviewTemplateId) {
         return reviewTemplateRepository.findById(reviewTemplateId)
