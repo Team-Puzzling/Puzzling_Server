@@ -13,6 +13,7 @@ import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
 import com.puzzling.puzzlingServer.common.exception.BadRequestException;
 import com.puzzling.puzzlingServer.common.exception.NotFoundException;
 import com.puzzling.puzzlingServer.common.response.ErrorStatus;
+import com.puzzling.puzzlingServer.common.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.Principal;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -62,9 +64,6 @@ public class ProjectServiceImpl implements ProjectService {
         if (today.equals("") || today == null) {
             throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
         }
-        Member findMember = findMemberById(memberId);
-        int puzzleCount = reviewRepository.findByUserIdAndProjectId(memberId, projectId).size();
-        ProjectMyPuzzleObjectDto projectMyPuzzleObjectDto = ProjectMyPuzzleObjectDto.of(findMember.getName(), puzzleCount);
 
         Pageable pageable = PageRequest.of(0, 15); // 첫 번째 페이지, 페이지 크기 15
         Page<Review> pageReviews = reviewRepository.findTop15ByMemberIdAndProjectId(memberId, projectId, pageable);
@@ -74,17 +73,75 @@ public class ProjectServiceImpl implements ProjectService {
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
 
         List<PuzzleObjectDto> result = new ArrayList<>();
-        int idx = 1;
-        for (Review review : top15Reviews) {
-            result.add(PuzzleObjectDto.of(review.getReviewDate(), review.getId(), "puzzleA" + idx++));
+        for (int idx = 1; idx <= top15Reviews.size(); idx++) {
+            Review review = top15Reviews.get(idx - 1);
+            result.add(PuzzleObjectDto.of(review.getReviewDate(), review.getId(), ("puzzleA" + idx)));
         }
 
         if (isReviewDay) {
             if (!hasTodayReview) {
-                result.add(PuzzleObjectDto.of(null, null, "puzzleD" + idx));
+                result.add(PuzzleObjectDto.of(null, null, "puzzleD" + result.size() + 1));
             }
         }
-        return ProjectOwnPuzzleResponseDto.of(projectMyPuzzleObjectDto,result,isReviewDay,hasTodayReview);
+        return ProjectOwnPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), result,
+                isReviewDay, hasTodayReview);
+    }
+
+    @Override
+    @Transactional
+    public ProjectTeamPuzzleResponseDto getTeamPuzzles(Principal principal, Long projectId, String today) {
+        if (today.equals("") || today == null) {
+            throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
+        }
+        Long memberId = MemberUtil.getMemberId(principal);
+        Boolean isReviewDay = checkTodayIsReviewDay(today, projectId);
+        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
+        List<Review> reviews = reviewRepository.findAllByProjectIdOrderByReviewDateAsc(projectId);
+
+        // 날짜별 리뷰 개수를 카운트하기 위한 Map 생성
+        Map<String, Integer> reviewCountMap = new HashMap<>();
+
+        // 날짜별 리뷰 개수 카운트 작업
+        for (Review review : reviews) {
+            String reviewDate = review.getReviewDate();
+            reviewCountMap.put(reviewDate, reviewCountMap.getOrDefault(reviewDate, 0) + 1);
+        }
+
+        // reviewCountMap을 날짜 기준으로 최신순으로 정렬한 결과를 저장할 TreeMap 생성
+        Map<String, Integer> sortedReviewCountMap = new TreeMap<>((date1, date2) -> date1.compareTo(date2));
+        sortedReviewCountMap.putAll(reviewCountMap);
+
+        // 결과 배열을 저장할 List 생성
+        List<TeamPuzzleObjectDto> teamPuzzleBoard = new ArrayList<>();
+
+        int idx = 1;
+        // 날짜별 리뷰 개수를 배열 형태로 변환하여 저장
+        for (Map.Entry<String, Integer> entry : sortedReviewCountMap.entrySet()) {
+            String reviewMemberPercent = getReviewMemberPercent(projectId, entry.getValue());
+            teamPuzzleBoard.add(TeamPuzzleObjectDto.of(entry.getKey(),
+                    reviewMemberPercent, "puzzle"+reviewMemberPercent+idx++));
+        }
+
+        if (isReviewDay) {
+            if (!hasTodayReview) {
+                teamPuzzleBoard.add(TeamPuzzleObjectDto.of(null, null, "puzzleD" + (teamPuzzleBoard.size()+1)));
+            }
+        }
+        return ProjectTeamPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), teamPuzzleBoard,
+                isReviewDay, hasTodayReview);
+    }
+
+    private String getReviewMemberPercent(Long projectId, int reviewCount) {
+        int totalProjectMember = userProjectRepository.findAllByProjectId(projectId).size();
+        float percent = (float) reviewCount/totalProjectMember;
+
+        if (percent <= 0.334) {
+            return "A";
+        } else if (0.334 <= percent && percent <= 0.667 ) {
+            return "B";
+        } else {
+            return "C";
+        }
     }
 
     private Member findMemberById(Long memberId) {
@@ -108,6 +165,12 @@ public class ProjectServiceImpl implements ProjectService {
         String reviewCycle = findProjectById(projectId).getReviewCycle();
         List<String> weekdayList = Arrays.asList(reviewCycle.split(","));
         return weekdayList.contains(dayOfWeekKorean);
+    }
+
+    private ProjectMyPuzzleObjectDto mapperMyPuzzleObject(Long memberId, Long projectId) {
+        Member findMember = findMemberById(memberId);
+        int puzzleCount = reviewRepository.findByMemberIdAndProjectId(memberId, projectId).size();
+        return ProjectMyPuzzleObjectDto.of(findMember.getName(), puzzleCount);
     }
 
 }
