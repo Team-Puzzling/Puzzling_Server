@@ -5,12 +5,16 @@ import com.puzzling.puzzlingServer.common.response.ApiResponse;
 import com.puzzling.puzzlingServer.common.response.ErrorStatus;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.time.format.DateTimeParseException;
+import java.util.Objects;
+
 
 import static com.puzzling.puzzlingServer.common.response.ErrorStatus.KAKAO_UNAUTHORIZED_USER;
 
@@ -46,6 +50,13 @@ public class ControllerExceptionAdvice {
     public ResponseEntity<ApiResponse>  handleHttpClientErrorException(HttpClientErrorException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(ApiResponse.fail(HttpStatus.UNAUTHORIZED.value(), KAKAO_UNAUTHORIZED_USER.getMessage()));
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    protected ResponseEntity<ApiResponse> handleMethodArgumentNotValidException(final MethodArgumentNotValidException e) {
+        FieldError fieldError = Objects.requireNonNull(e.getFieldError());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.fail(HttpStatus.BAD_REQUEST.value(),String.format("%s. (%s)", fieldError.getDefaultMessage(), fieldError.getField())));
     }
 
 }
