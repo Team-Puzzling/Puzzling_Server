@@ -1,6 +1,5 @@
-package com.puzzling.puzzlingServer.api.review.dto;
+package com.puzzling.puzzlingServer.api.review.dto.response;
 
-import com.puzzling.puzzlingServer.api.template.domain.ReviewTemplate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

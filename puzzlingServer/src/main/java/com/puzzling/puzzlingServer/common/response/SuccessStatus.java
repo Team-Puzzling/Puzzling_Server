@@ -25,7 +25,8 @@ public enum SuccessStatus {
     /**
      * review
      */
-    GET_REVIEW_TEMPLATE_SUCCESS(HttpStatus.OK,"회고 템플릿 목록 조회 성공") ;
+    GET_REVIEW_TEMPLATE_SUCCESS(HttpStatus.OK,"회고 템플릿 목록 조회 성공"),
+    POST_REVIEW_SUCCESS(HttpStatus.OK,"회고 글 작성 성공")
     ;
 
     private final HttpStatus httpStatus;

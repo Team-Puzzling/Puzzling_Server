@@ -31,19 +31,19 @@ public class Review extends BaseTimeEntity {
     @Column(nullable = false, name = "review_date")
     private String reviewDate;
 
-    @Column(name = "user_id", nullable = false)
-    private Long userId;
+    @Column(name = "member_id", nullable = false)
+    private Long memberId;
 
     @Column(name = "project_id", nullable = false)
     private Long projectId;
 
     @Builder
     public Review(UserProject userProject, ReviewTemplate reviewTemplate, String reviewDate,
-                  Long userId, Long projectId) {
+                  Long memberId, Long projectId) {
         this.userProject = userProject;
         this.reviewTemplate = reviewTemplate;
         this.reviewDate = reviewDate;
-        this.userId = userId;
+        this.memberId = memberId;
         this.projectId = projectId;
     }
 }

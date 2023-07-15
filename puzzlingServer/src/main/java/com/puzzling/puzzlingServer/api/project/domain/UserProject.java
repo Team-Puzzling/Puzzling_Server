@@ -50,4 +50,8 @@ public class UserProject extends BaseTimeEntity {
         this.member = member;
         this.project = project;
     }
+
+    public void updatePreviousTemplateId(Long reviewTemplateId) {
+        this.reviewTemplateId = reviewTemplateId;
+    }
 }
