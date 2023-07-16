@@ -4,6 +4,7 @@ import com.puzzling.puzzlingServer.api.project.domain.UserProject;
 import com.puzzling.puzzlingServer.api.project.repository.UserProjectRepository;
 import com.puzzling.puzzlingServer.api.review.domain.Review;
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
@@ -11,10 +12,7 @@ import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResp
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
-import com.puzzling.puzzlingServer.api.template.Repository.Review5FRepository;
-import com.puzzling.puzzlingServer.api.template.Repository.ReviewARRRepository;
-import com.puzzling.puzzlingServer.api.template.Repository.ReviewTILRepository;
-import com.puzzling.puzzlingServer.api.template.Repository.ReviewTemplateRepository;
+import com.puzzling.puzzlingServer.api.template.Repository.*;
 import com.puzzling.puzzlingServer.api.template.domain.Review5F;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewAAR;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTIL;
@@ -22,10 +20,15 @@ import com.puzzling.puzzlingServer.api.template.domain.ReviewTemplate;
 import com.puzzling.puzzlingServer.common.exception.BadRequestException;
 import com.puzzling.puzzlingServer.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -37,6 +40,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewTILRepository reviewTILRepository;
     private final ReviewARRRepository reviewARRRepository;
     private final Review5FRepository review5FRepository;
+    private final ReviewAARRepository reviewAARRepository;
     private final ReviewRepository reviewRepository;
     @Override
     @Transactional
@@ -147,6 +151,35 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewPreviousTemplateResponseDto.of(findUserProject.getReviewTemplateId());
     }
 
+    @Override
+    @Transactional
+    public List<ReviewActionPlanResponseDto> getReviewActionPlans(Long memberId, Long projectId) {
+        List<Review> findReviews = reviewRepository.findAllByMemberIdAndProjectIdOrderByReviewDateDesc(memberId, projectId);
+
+        if (findReviews.isEmpty()) {
+            throw new BadRequestException("유저가 해당 프로젝트 팀원이 아닙니다.");
+        }
+
+        return findReviews.stream()
+                .map(findReview -> {
+                    String reviewTemplateName = findReview.getReviewTemplate().getName();
+
+                    switch (reviewTemplateName) {
+                        case "TIL":
+                            ReviewTIL reviewTIL = findReviewByReviewId(findReview.getId(), reviewTILRepository, "TIL");
+                            return ReviewActionPlanResponseDto.of(reviewTIL.getActionPlan(), findReview.getReviewDate());
+                        case "5F":
+                            Review5F review5F = findReviewByReviewId(findReview.getId(), review5FRepository, "5F");
+                            return ReviewActionPlanResponseDto.of(review5F.getActionPlan(), findReview.getReviewDate());
+                        case "AAR":
+                            ReviewAAR reviewAAR = findReviewByReviewId(findReview.getId(), reviewAARRepository, "AAR");
+                            return ReviewActionPlanResponseDto.of(reviewAAR.getActionPlan(), findReview.getReviewDate());
+                        default:
+                            throw new BadRequestException("올바르지 않은 리뷰 템플릿 이름: " + reviewTemplateName);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
 
     private ReviewTemplate findReviewTemplateById (Long reviewTemplateId) {
         return reviewTemplateRepository.findById(reviewTemplateId)
@@ -156,5 +189,19 @@ public class ReviewServiceImpl implements ReviewService {
     private UserProject findUserProjectByMemberIdAndProjectId (Long memberId, Long projectId) {
         return userProjectRepository.findByMemberIdAndProjectId(memberId,projectId)
                 .orElseThrow(() -> new NotFoundException("해당하는 멤버가 참여하는 프로젝트가 아닙니다."));
+    }
+
+    private <T> T findReviewByReviewId(Long reviewId, JpaRepository<T, Long> repository, String reviewTemplate) {
+        try {
+            Method findByReviewIdMethod = repository.getClass().getMethod("findByReviewId", Long.class);
+            T result = (T) findByReviewIdMethod.invoke(repository, reviewId);
+
+            if (result == null) {
+                throw new NotFoundException(reviewTemplate + " 형식으로 작성한 회고를 찾을 수 없습니다.");
+            }
+            return result;
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new NotFoundException(reviewTemplate + " 형식으로 작성한 회고를 찾을 수 없습니다.");
+        }
     }
 }
