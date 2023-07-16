@@ -5,6 +5,8 @@ import com.puzzling.puzzlingServer.api.project.repository.UserProjectRepository;
 import com.puzzling.puzzlingServer.api.review.domain.Review;
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
+
+import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
@@ -138,6 +140,11 @@ public class ReviewServiceImpl implements ReviewService {
                 .actionPlan(reviewAARRequestDto.getActionPlan())
                 .build();
         reviewARRRepository.save(reviewAAR);
+    }
+
+    public ReviewPreviousTemplateResponseDto getPreviousReviewTemplate(Long memberId, Long projectId) {
+        UserProject findUserProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
+        return ReviewPreviousTemplateResponseDto.of(findUserProject.getReviewTemplateId());
     }
 
 

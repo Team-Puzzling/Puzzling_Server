@@ -1,6 +1,5 @@
 package com.puzzling.puzzlingServer.api.project.dto.response;
 
-import com.puzzling.puzzlingServer.api.project.domain.Project;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
