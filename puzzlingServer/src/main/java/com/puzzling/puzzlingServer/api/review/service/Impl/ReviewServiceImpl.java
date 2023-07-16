@@ -4,6 +4,7 @@ import com.puzzling.puzzlingServer.api.project.domain.UserProject;
 import com.puzzling.puzzlingServer.api.project.repository.UserProjectRepository;
 import com.puzzling.puzzlingServer.api.review.domain.Review;
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
@@ -45,7 +46,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void createReviewTIL(Long memberId, Long projectId, ReviewTILRequestDto reviewTILRequestDto) {
-        UserProject userProject = userProjectRepository.findByMemberIdAndProjectId(memberId,projectId);
+        UserProject userProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
 
         if ( reviewTILRequestDto.getReviewTemplateId() == null ) {
             throw new BadRequestException("공백일 수 없습니다. (reviewTemplateId)");
@@ -75,7 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public void createReview5F(Long memberId, Long projectId, Review5FRequestDto review5FRequestDto) {
-        UserProject userProject = userProjectRepository.findByMemberIdAndProjectId(memberId,projectId);
+        UserProject userProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
 
         if ( review5FRequestDto.getReviewTemplateId() == null ) {
             throw new BadRequestException("공백일 수 없습니다. (reviewTemplateId)");
@@ -104,9 +105,21 @@ public class ReviewServiceImpl implements ReviewService {
         review5FRepository.save(review5F);
     }
 
+    @Override
+    @Transactional
+    public ReviewPreviousTemplateResponseDto getPreviousReviewTemplate(Long memberId, Long projectId) {
+        UserProject findUserProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
+        return ReviewPreviousTemplateResponseDto.of(findUserProject.getReviewTemplateId());
+    }
+
 
     private ReviewTemplate findReviewTemplateById (Long reviewTemplateId) {
         return reviewTemplateRepository.findById(reviewTemplateId)
-                .orElseThrow(() -> new NotFoundException("해당하는 회고 팀플릿이 없습니다"));
+                .orElseThrow(() -> new NotFoundException("해당하는 회고 팀플릿이 없습니다."));
+    }
+
+    private UserProject findUserProjectByMemberIdAndProjectId (Long memberId, Long projectId) {
+        return userProjectRepository.findByMemberIdAndProjectId(memberId,projectId)
+                .orElseThrow(() -> new NotFoundException("해당하는 멤버가 참여하는 프로젝트가 아닙니다."));
     }
 }
