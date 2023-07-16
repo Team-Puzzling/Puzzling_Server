@@ -154,7 +154,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public List<ReviewActionPlanResponseDto> getReviewActionPlans(Long memberId, Long projectId) {
-        List<Review> findReviews = reviewRepository.findAllByMemberIdAndProjectIdOrderByReviewDateAsc(memberId, projectId);
+        List<Review> findReviews = reviewRepository.findAllByMemberIdAndProjectIdOrderByReviewDateDesc(memberId, projectId);
 
         if (findReviews.isEmpty()) {
             throw new BadRequestException("유저가 해당 프로젝트 팀원이 아닙니다.");
