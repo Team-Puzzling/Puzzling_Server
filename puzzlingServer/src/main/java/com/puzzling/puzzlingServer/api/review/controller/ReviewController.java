@@ -1,6 +1,7 @@
 package com.puzzling.puzzlingServer.api.review.controller;
 
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
@@ -11,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 @RestController
@@ -40,5 +42,10 @@ public class ReviewController {
     @GetMapping("member/{memberId}/project/{projectId}/review/previous-template")
     public ApiResponse<ReviewPreviousTemplateResponseDto> getPreviousReviewTemplate(@PathVariable Long memberId, @PathVariable Long projectId) {
         return ApiResponse.success(SuccessStatus.GET_REVIEW_PREVIOUS_TEMPLATE, reviewService.getPreviousReviewTemplate(memberId, projectId));
+    }
+
+    @GetMapping("member/{memberId}/project/{projectId}/actionplan")
+    public ApiResponse<ReviewActionPlanResponseDto> getReviewActionPlans(@PathVariable Long memberId, @PathVariable Long projectId) {
+        return ApiResponse.success(SuccessStatus.GET_REVIEW_ACTION_PLAN, reviewService.getReviewActionPlans(memberId, projectId));
     }
 }
