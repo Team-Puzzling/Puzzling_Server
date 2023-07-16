@@ -12,7 +12,7 @@ import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
 import com.puzzling.puzzlingServer.api.template.Repository.Review5FRepository;
-import com.puzzling.puzzlingServer.api.template.Repository.ReviewARRRepository;
+import com.puzzling.puzzlingServer.api.template.Repository.ReviewAARRepository;
 import com.puzzling.puzzlingServer.api.template.Repository.ReviewTILRepository;
 import com.puzzling.puzzlingServer.api.template.Repository.ReviewTemplateRepository;
 import com.puzzling.puzzlingServer.api.template.domain.Review5F;
@@ -35,7 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewTemplateRepository reviewTemplateRepository;
     private final UserProjectRepository userProjectRepository;
     private final ReviewTILRepository reviewTILRepository;
-    private final ReviewARRRepository reviewARRRepository;
+    private final ReviewAARRepository reviewARRRepository;
     private final Review5FRepository review5FRepository;
     private final ReviewRepository reviewRepository;
     @Override

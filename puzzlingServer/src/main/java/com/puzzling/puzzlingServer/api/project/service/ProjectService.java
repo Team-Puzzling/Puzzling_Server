@@ -1,9 +1,7 @@
 package com.puzzling.puzzlingServer.api.project.service;
 
-import com.puzzling.puzzlingServer.api.project.dto.response.ProjectOwnPuzzleResponseDto;
-import com.puzzling.puzzlingServer.api.project.dto.response.ProjectResponseDto;
-import com.puzzling.puzzlingServer.api.project.dto.response.ProjectTeamPuzzleResponseDto;
-import com.puzzling.puzzlingServer.api.project.dto.response.ProjectVerifyResponseDto;
+import com.puzzling.puzzlingServer.api.project.dto.request.ProjectRegisterRequestDto;
+import com.puzzling.puzzlingServer.api.project.dto.response.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -21,4 +19,7 @@ public interface ProjectService {
 
     //* 팀 대시보드 퍼즐 조회
     ProjectTeamPuzzleResponseDto getTeamPuzzles(Principal principal, Long projectId, String today);
+
+    //* 프로젝트 생성
+    ProjectRegisterResponseDto createProject(Long memberId, ProjectRegisterRequestDto projectRegisterRequestDto);
 }

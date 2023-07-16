@@ -1,15 +1,14 @@
 package com.puzzling.puzzlingServer.api.project.controller;
 
-import com.puzzling.puzzlingServer.api.project.dto.response.ProjectOwnPuzzleResponseDto;
-import com.puzzling.puzzlingServer.api.project.dto.response.ProjectResponseDto;
-import com.puzzling.puzzlingServer.api.project.dto.response.ProjectTeamPuzzleResponseDto;
-import com.puzzling.puzzlingServer.api.project.dto.response.ProjectVerifyResponseDto;
+import com.puzzling.puzzlingServer.api.project.dto.request.*;
+import com.puzzling.puzzlingServer.api.project.dto.response.*;
 import com.puzzling.puzzlingServer.api.project.service.ProjectService;
 import com.puzzling.puzzlingServer.common.response.ApiResponse;
 import com.puzzling.puzzlingServer.common.response.SuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 
 @RestController
@@ -37,5 +36,11 @@ public class ProjectController {
     @GetMapping("/project/{projectId}/team/puzzle")
     public ApiResponse<ProjectTeamPuzzleResponseDto> getTeamPuzzles(Principal principal, @PathVariable Long projectId, @RequestParam String today) {
         return ApiResponse.success(SuccessStatus.GET_PROJECT_TEAM_PUZZLE_SUCCESS, projectService.getTeamPuzzles(principal, projectId, today));
+    }
+    
+    @PostMapping("member/{memberId}/project")
+    public ApiResponse<ProjectRegisterResponseDto> createProject(@PathVariable("memberId") Long memberId, @Valid @RequestBody ProjectRegisterRequestDto projectRegisterRequestDto) {
+       projectService.createProject(memberId, projectRegisterRequestDto);
+       return ApiResponse.success(SuccessStatus.POST_PROJECT_SUCCESS.getStatusCode(), SuccessStatus.POST_PROJECT_SUCCESS.getMessage());
     }
 }
