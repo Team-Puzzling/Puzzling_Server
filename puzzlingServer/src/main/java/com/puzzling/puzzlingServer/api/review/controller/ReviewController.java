@@ -1,6 +1,7 @@
 package com.puzzling.puzzlingServer.api.review.controller;
 
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
@@ -33,6 +34,12 @@ public class ReviewController {
     @PostMapping("member/{memberId}/project/{projectId}/review/5F")
     public ApiResponse createReview5F(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody Review5FRequestDto review5FRequestDto){
         reviewService.createReview5F(memberId, projectId, review5FRequestDto);
+        return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS.getStatusCode(), SuccessStatus.POST_REVIEW_SUCCESS.getMessage());
+    }
+
+    @PostMapping("member/{memberId}/project/{projectId}/review/AAR")
+    public ApiResponse createReviewAAR(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody ReviewAARRequestDto reviewAARRequestDto){
+        reviewService.createReviewAAR(memberId, projectId, reviewAARRequestDto);
         return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS.getStatusCode(), SuccessStatus.POST_REVIEW_SUCCESS.getMessage());
     }
 }
