@@ -4,15 +4,19 @@ import com.puzzling.puzzlingServer.api.project.domain.UserProject;
 import com.puzzling.puzzlingServer.api.project.repository.UserProjectRepository;
 import com.puzzling.puzzlingServer.api.review.domain.Review;
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
+
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
 import com.puzzling.puzzlingServer.api.template.Repository.Review5FRepository;
+import com.puzzling.puzzlingServer.api.template.Repository.ReviewARRRepository;
 import com.puzzling.puzzlingServer.api.template.Repository.ReviewTILRepository;
 import com.puzzling.puzzlingServer.api.template.Repository.ReviewTemplateRepository;
 import com.puzzling.puzzlingServer.api.template.domain.Review5F;
+import com.puzzling.puzzlingServer.api.template.domain.ReviewAAR;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTIL;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTemplate;
 import com.puzzling.puzzlingServer.common.exception.BadRequestException;
@@ -31,6 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewTemplateRepository reviewTemplateRepository;
     private final UserProjectRepository userProjectRepository;
     private final ReviewTILRepository reviewTILRepository;
+    private final ReviewARRRepository reviewARRRepository;
     private final Review5FRepository review5FRepository;
     private final ReviewRepository reviewRepository;
     @Override
@@ -107,6 +112,36 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
+    public void createReviewAAR(Long memberId, Long projectId, ReviewAARRequestDto reviewAARRequestDto) {
+        UserProject userProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
+
+        if ( reviewAARRequestDto.getReviewTemplateId() == null ) {
+            throw new BadRequestException("공백일 수 없습니다. (reviewTemplateId)");
+        }
+        ReviewTemplate reviewTemplate = findReviewTemplateById(reviewAARRequestDto.getReviewTemplateId());
+
+        userProject.updatePreviousTemplateId(reviewAARRequestDto.getReviewTemplateId());
+
+        Review review = Review.builder()
+                .userProject(userProject)
+                .reviewTemplate(reviewTemplate)
+                .reviewDate("123")
+                .memberId(memberId)
+                .projectId(projectId)
+                .build();
+        Review savedReview = reviewRepository.save(review);
+
+        ReviewAAR reviewAAR = ReviewAAR.builder()
+                .review(savedReview)
+                .initialGoal(reviewAARRequestDto.getInitialGoal())
+                .result(reviewAARRequestDto.getResult())
+                .difference(reviewAARRequestDto.getDifference())
+                .persistence(reviewAARRequestDto.getPersistence())
+                .actionPlan(reviewAARRequestDto.getActionPlan())
+                .build();
+        reviewARRRepository.save(reviewAAR);
+    }
+
     public ReviewPreviousTemplateResponseDto getPreviousReviewTemplate(Long memberId, Long projectId) {
         UserProject findUserProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
         return ReviewPreviousTemplateResponseDto.of(findUserProject.getReviewTemplateId());
