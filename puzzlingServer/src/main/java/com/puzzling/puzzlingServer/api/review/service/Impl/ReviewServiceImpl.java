@@ -12,10 +12,7 @@ import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResp
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
-import com.puzzling.puzzlingServer.api.template.Repository.Review5FRepository;
-import com.puzzling.puzzlingServer.api.template.Repository.ReviewAARRepository;
-import com.puzzling.puzzlingServer.api.template.Repository.ReviewTILRepository;
-import com.puzzling.puzzlingServer.api.template.Repository.ReviewTemplateRepository;
+import com.puzzling.puzzlingServer.api.template.Repository.*;
 import com.puzzling.puzzlingServer.api.template.domain.Review5F;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewAAR;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTIL;
