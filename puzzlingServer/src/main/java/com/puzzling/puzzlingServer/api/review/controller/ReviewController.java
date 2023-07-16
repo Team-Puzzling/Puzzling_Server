@@ -2,7 +2,9 @@ package com.puzzling.puzzlingServer.api.review.controller;
 
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanResponseDto;
+import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
+
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
@@ -39,9 +41,16 @@ public class ReviewController {
         return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS.getStatusCode(), SuccessStatus.POST_REVIEW_SUCCESS.getMessage());
     }
 
+    @PostMapping("member/{memberId}/project/{projectId}/review/AAR")
+    public ApiResponse createReviewAAR(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody ReviewAARRequestDto reviewAARRequestDto){
+        reviewService.createReviewAAR(memberId, projectId, reviewAARRequestDto);
+        return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS.getStatusCode(), SuccessStatus.POST_REVIEW_SUCCESS.getMessage());
+    }
+  
     @GetMapping("member/{memberId}/project/{projectId}/review/previous-template")
     public ApiResponse<ReviewPreviousTemplateResponseDto> getPreviousReviewTemplate(@PathVariable Long memberId, @PathVariable Long projectId) {
         return ApiResponse.success(SuccessStatus.GET_REVIEW_PREVIOUS_TEMPLATE, reviewService.getPreviousReviewTemplate(memberId, projectId));
+
     }
 
     @GetMapping("member/{memberId}/project/{projectId}/actionplan")
