@@ -1,6 +1,5 @@
 package com.puzzling.puzzlingServer.api.project.service;
 
-import com.puzzling.puzzlingServer.api.project.domain.Project;
 import com.puzzling.puzzlingServer.api.project.dto.response.ProjectOwnPuzzleResponseDto;
 import com.puzzling.puzzlingServer.api.project.dto.response.ProjectResponseDto;
 import com.puzzling.puzzlingServer.api.project.dto.response.ProjectTeamPuzzleResponseDto;
