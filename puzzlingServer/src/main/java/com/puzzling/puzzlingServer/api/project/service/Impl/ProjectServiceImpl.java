@@ -17,7 +17,6 @@ import com.puzzling.puzzlingServer.common.exception.NotFoundException;
 import com.puzzling.puzzlingServer.common.response.ErrorStatus;
 import com.puzzling.puzzlingServer.common.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,11 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.ByteBuffer;
 import java.security.Principal;
-import java.security.SecureRandom;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 

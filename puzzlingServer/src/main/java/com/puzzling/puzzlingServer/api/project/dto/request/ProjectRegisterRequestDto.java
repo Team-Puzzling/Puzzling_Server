@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
-import java.lang.reflect.Array;
-import java.util.List;
 
 import static lombok.AccessLevel.PROTECTED;
 

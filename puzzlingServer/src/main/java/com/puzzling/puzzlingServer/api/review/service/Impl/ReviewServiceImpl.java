@@ -36,10 +36,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -210,13 +208,10 @@ public class ReviewServiceImpl implements ReviewService {
 
         List<ReviewTeamStatusResponseDto> result = new ArrayList<>();
 
-        //1. 프로젝트 id로 userProjects 리스트 뽑아오기
         List<UserProject> userProjects = userProjectRepository.findAllByProjectId(projectId);
 
-        //2. 프로젝트 회고 주기 가져오기
         String reviewCycle = findProjectById(projectId).getReviewCycle();
 
-        //3.startDate와 endDate 사이에 회고 주기에 맞는 날짜 계산
         List<String> reviewDates = generateReviewDates(startDate, endDate, reviewCycle);
 
         for (String reviewDate : reviewDates) {
