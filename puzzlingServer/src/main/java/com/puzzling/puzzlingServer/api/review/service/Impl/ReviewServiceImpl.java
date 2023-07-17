@@ -27,6 +27,10 @@ import com.puzzling.puzzlingServer.api.template.domain.Review5F;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewAAR;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTIL;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTemplate;
+import com.puzzling.puzzlingServer.api.template.strategy.AARReviewTemplateStrategy;
+import com.puzzling.puzzlingServer.api.template.strategy.FiveFReviewTemplateStrategy;
+import com.puzzling.puzzlingServer.api.template.strategy.ReviewTemplateStrategy;
+import com.puzzling.puzzlingServer.api.template.strategy.TILReviewTemplateStrategy;
 import com.puzzling.puzzlingServer.common.exception.BadRequestException;
 import com.puzzling.puzzlingServer.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -177,10 +181,6 @@ public class ReviewServiceImpl implements ReviewService {
     public List<ReviewActionPlanResponseDto> getReviewActionPlans(Long memberId, Long projectId) {
         List<Review> findReviews = reviewRepository.findAllByMemberIdAndProjectIdOrderByReviewDateDesc(memberId, projectId);
 
-        if (findReviews.isEmpty()) {
-            throw new BadRequestException("유저가 해당 프로젝트 팀원이 아닙니다.");
-        }
-
         return findReviews.stream()
                 .map(findReview -> {
                     String reviewTemplateName = findReview.getReviewTemplate().getName();
@@ -233,17 +233,58 @@ public class ReviewServiceImpl implements ReviewService {
         return result;
     }
 
-    private Project findProjectById (Long projectId) {
-        return projectRepository.findById(projectId).orElseThrow(() ->
-                new NotFoundException(NOT_FOUND_PROJECT.getMessage()));
+    @Override
+    @Transactional
+    public List<ReviewDetailResponseDto> getMyReviewDetail(Long memberId, Long projectId, String startDate, String endDate) {
+        List<ReviewDetailResponseDto> result = new ArrayList<>();
+        String reviewCycle = findProjectById(projectId).getReviewCycle();
+
+        List<String> reviewDates = generateReviewDates(startDate, endDate, reviewCycle);
+
+        for (String reviewDate : reviewDates) {
+            Optional<Review> findReview = reviewRepository.findByMemberIdAndProjectIdAndReviewDate(memberId, projectId, reviewDate);
+            List<ReviewContentObjectDto> reviewContent = new ArrayList<>();
+
+            if (findReview.isPresent()) {
+                Review reviewValue = findReview.get();
+                String reviewTemplateName = reviewValue.getReviewTemplate().getName();
+
+                switch (reviewTemplateName) {
+                    case "TIL":
+                        ReviewTIL reviewTIL = findReviewByReviewId(reviewValue.getId(), reviewTILRepository, "TIL");
+                        TILReviewTemplateStrategy TILStrategy = new TILReviewTemplateStrategy();
+                        TILStrategy.getReviewContents(reviewTIL, reviewContent);
+                        break;
+                    case "5F":
+                        Review5F review5F = findReviewByReviewId(reviewValue.getId(), review5FRepository, "5F");
+                        FiveFReviewTemplateStrategy FiveFStrategy = new FiveFReviewTemplateStrategy();
+                        FiveFStrategy.getReviewContents(review5F, reviewContent);
+                        break;
+                    case "AAR":
+                        ReviewAAR reviewAAR = findReviewByReviewId(reviewValue.getId(), reviewAARRepository, "AAR");
+                        AARReviewTemplateStrategy AARStrategy = new AARReviewTemplateStrategy();
+                        AARStrategy.getReviewContents(reviewAAR, reviewContent);
+                        break;
+                    default:
+                        throw new BadRequestException("올바르지 않은 리뷰 템플릿 이름: " + reviewTemplateName);
+                }
+
+                result.add(ReviewDetailResponseDto.of(reviewValue.getId(), getDayOfWeek(reviewDate), reviewDate,
+                        reviewValue.getReviewTemplate().getId(), reviewContent));
+            } else {
+                result.add(ReviewDetailResponseDto.of(null, getDayOfWeek(reviewDate), reviewDate,
+                        null, null));
+            }
+        }
+        return result;
     }
-  
+
+
+    @Override
+    @Transactional
     public List<MyReviewProjectResponseDto> getMyReviewProjects(Long memberId, Long projectId) {
         List<Review> findReviews = reviewRepository.findAllByMemberIdAndProjectIdOrderByReviewDateDesc(memberId, projectId);
 
-        if (findReviews.isEmpty()) {
-            throw new BadRequestException("유저가 해당 프로젝트 팀원이 아닙니다.");
-        }
         return findReviews.stream()
                 .map(findReview -> {
                     String reviewTemplateName = findReview.getReviewTemplate().getName();
@@ -263,6 +304,11 @@ public class ReviewServiceImpl implements ReviewService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    private Project findProjectById (Long projectId) {
+        return projectRepository.findById(projectId).orElseThrow(() ->
+                new NotFoundException(NOT_FOUND_PROJECT.getMessage()));
     }
 
     private ReviewTemplate findReviewTemplateById (Long reviewTemplateId) {

@@ -177,11 +177,11 @@ public class ProjectServiceImpl implements ProjectService {
         if ( projectJoinRequestDto.getProjectId() == null ) {
             throw new BadRequestException("공백일 수 없습니다. (reviewTemplateId)");
         }
-        if (userProjectRepository.existsByMemberIdAndProjectId(memberId, projectJoinRequestDto.getProjectId())){
-            throw new BadRequestException(("이미 프로젝트에 참여한 팀원입니다."));
-        }
         if (userProjectRepository.existsByProjectIdAndNickname(projectJoinRequestDto.getProjectId(),projectJoinRequestDto.getMemberProjectNickname())){
             throw new BadRequestException(("이미 프로젝트에 있는 닉네임입니다."));
+        }
+        if (userProjectRepository.existsByMemberIdAndProjectId(memberId, projectJoinRequestDto.getProjectId())){
+            throw new BadRequestException(("이미 프로젝트에 참여한 팀원입니다."));
         }
         Member member = findMemberById(memberId);
         Project project = findProjectById(projectJoinRequestDto.getProjectId());
