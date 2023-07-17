@@ -12,7 +12,7 @@ import static lombok.AccessLevel.PRIVATE;
 public class ProjectRegisterResponseDto {
     private String projectCode;
 
-    public static ProjectRegisterResponseDto of(String projectCode){
+    public static ProjectRegisterResponseDto of (String projectCode){
         return new ProjectRegisterResponseDto(projectCode);
     }
 }

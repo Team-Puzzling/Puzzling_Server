@@ -159,7 +159,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .project(savedProject)
                 .build();
         userProjectRepository.save(userProject);
-        return new ProjectRegisterResponseDto(cycle);
+        return ProjectRegisterResponseDto.of(inviteCode);
     }
     public List<ProjectTeamRankResponseDto> getTeamRank(Long projectId) {
         List<UserProject> findUserProjects = userProjectRepository.findAllByProjectIdOrderByReviewCountDesc(projectId);
