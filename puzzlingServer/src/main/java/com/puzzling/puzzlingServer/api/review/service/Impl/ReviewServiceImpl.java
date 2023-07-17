@@ -33,6 +33,7 @@ import com.puzzling.puzzlingServer.api.template.strategy.ReviewTemplateStrategy;
 import com.puzzling.puzzlingServer.api.template.strategy.TILReviewTemplateStrategy;
 import com.puzzling.puzzlingServer.common.exception.BadRequestException;
 import com.puzzling.puzzlingServer.common.exception.NotFoundException;
+import com.puzzling.puzzlingServer.common.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -46,8 +47,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.puzzling.puzzlingServer.common.response.ErrorStatus.NOT_FOUND_PROJECT;
-import static com.puzzling.puzzlingServer.common.util.DateUtil.checkTodayIsReviewDay;
-import static com.puzzling.puzzlingServer.common.util.DateUtil.getDayOfWeek;
+import static com.puzzling.puzzlingServer.common.util.DateUtil.*;
 
 
 @Service
@@ -88,7 +88,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = Review.builder()
                 .userProject(userProject)
                 .reviewTemplate(reviewTemplate)
-                .reviewDate("123")
+                .reviewDate(convertLocalDatetoString(LocalDate.now()))
                 .memberId(memberId)
                 .projectId(projectId)
                 .build();
@@ -119,7 +119,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = Review.builder()
                 .userProject(userProject)
                 .reviewTemplate(reviewTemplate)
-                .reviewDate("123")
+                .reviewDate(convertLocalDatetoString(LocalDate.now()))
                 .memberId(memberId)
                 .projectId(projectId)
                 .build();
@@ -152,7 +152,7 @@ public class ReviewServiceImpl implements ReviewService {
         Review review = Review.builder()
                 .userProject(userProject)
                 .reviewTemplate(reviewTemplate)
-                .reviewDate("123")
+                .reviewDate(convertLocalDatetoString(LocalDate.now()))
                 .memberId(memberId)
                 .projectId(projectId)
                 .build();

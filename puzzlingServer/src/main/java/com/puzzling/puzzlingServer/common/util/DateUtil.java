@@ -29,4 +29,9 @@ public class DateUtil {
 
         return dayOfWeekKorean;
     }
+
+    public static String convertLocalDatetoString(LocalDate localDate) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return localDate.format(formatter);
+    }
 }
