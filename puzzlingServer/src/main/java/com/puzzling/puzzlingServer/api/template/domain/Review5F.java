@@ -1,6 +1,7 @@
 package com.puzzling.puzzlingServer.api.template.domain;
 
 import com.puzzling.puzzlingServer.api.review.domain.Review;
+import com.puzzling.puzzlingServer.common.entity.BaseTimeEntity;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Review5F {
+public class Review5F extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

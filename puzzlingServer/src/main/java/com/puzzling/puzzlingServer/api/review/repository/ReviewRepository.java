@@ -21,4 +21,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     boolean existsReviewByReviewDate(String date);
 
     List<Review> findAllByProjectIdOrderByReviewDateAsc(Long projectId);
+
+    List<Review> findAllByMemberIdAndProjectIdOrderByReviewDateAsc(Long memberId, Long projectId);
+    List<Review> findAllByMemberIdAndProjectIdOrderByReviewDateDesc(Long memberId, Long projectId);
 }
