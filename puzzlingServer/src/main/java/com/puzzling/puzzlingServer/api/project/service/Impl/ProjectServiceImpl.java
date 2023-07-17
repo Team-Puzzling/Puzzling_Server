@@ -3,6 +3,7 @@ package com.puzzling.puzzlingServer.api.project.service.Impl;
 import com.puzzling.puzzlingServer.api.member.domain.Member;
 import com.puzzling.puzzlingServer.api.member.repository.MemberRepository;
 import com.puzzling.puzzlingServer.api.project.domain.UserProject;
+import com.puzzling.puzzlingServer.api.project.dto.request.ProjectJoinRequestDto;
 import com.puzzling.puzzlingServer.api.project.dto.request.ProjectRegisterRequestDto;
 import com.puzzling.puzzlingServer.api.project.dto.response.*;
 import com.puzzling.puzzlingServer.api.project.repository.ProjectRepository;
@@ -172,6 +173,40 @@ public class ProjectServiceImpl implements ProjectService {
             result.add(ProjectTeamRankResponseDto.of(idx++, userProject));
         }
         return result;
+    }
+
+    @Override
+    @Transactional
+    public ProjectJoinResponseDto joinProject(Long memberId, ProjectJoinRequestDto projectJoinRequestDto){
+        if ( projectJoinRequestDto.getProjectId() == null ) {
+            throw new BadRequestException("공백일 수 없습니다. (reviewTemplateId)");
+        }
+        if (userProjectRepository.existsByMemberIdAndProjectId(memberId, projectJoinRequestDto.getProjectId())){
+            throw new BadRequestException(("이미 프로젝트에 참여한 팀원입니다."));
+        }
+        Member member = findMemberById(memberId);
+        Project project = findProjectById(projectJoinRequestDto.getProjectId());
+
+        UserProject userProject = UserProject.builder()
+                .role(projectJoinRequestDto.getMemberProjectRole())
+                .nickname(projectJoinRequestDto.getMemberProjectNickname())
+                .leaderOrNot(Boolean.FALSE)
+                .reviewTemplateId(0L)
+                .member(member)
+                .project(project)
+                .build();
+        userProjectRepository.save(userProject);
+        return new ProjectJoinResponseDto(projectJoinRequestDto.getProjectId());
+    }
+
+    @Override
+    @Transactional
+    public ProjectCycleResponseDto getProjectCycle(Long projectId) {
+        Project project = findProjectById(projectId);
+        String name = project.getName();
+        String cycle = project.getReviewCycle();
+
+        return new ProjectCycleResponseDto(name,cycle);
     }
 
     private String getReviewMemberPercent(Long projectId, int reviewCount) {

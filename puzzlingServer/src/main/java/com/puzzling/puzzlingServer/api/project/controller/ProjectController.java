@@ -50,4 +50,15 @@ public class ProjectController {
     public ApiResponse<ProjectTeamRankResponseDto> getTeamRank(@PathVariable Long projectId) {
         return ApiResponse.success(SuccessStatus.GET_PROJECT_TEAM_RANK_SUCCESS, projectService.getTeamRank(projectId));
     }
+
+    @PostMapping("member/{memberId}/project/join")
+    public ApiResponse<ProjectJoinResponseDto>joinProject(@PathVariable("memberId") Long memberId, @Valid @RequestBody ProjectJoinRequestDto projectJoinRequestDto) {
+        projectService.joinProject(memberId, projectJoinRequestDto);
+        return ApiResponse.success(SuccessStatus.JOIN_PROJECT_SUCCESS.getStatusCode(), SuccessStatus.JOIN_PROJECT_SUCCESS.getMessage());
+    }
+
+    @GetMapping("project/{projectId}/cycle")
+    public ApiResponse<ProjectCycleResponseDto>getProjectCycle(@PathVariable("projectId")Long projectId) {
+        return ApiResponse.success(SuccessStatus.GET_PROJECT_CYCLE_SUCCESS, projectService.getProjectCycle(projectId));
+    }
 }

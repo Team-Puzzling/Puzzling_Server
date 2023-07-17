@@ -1,6 +1,6 @@
 package com.puzzling.puzzlingServer.api.project.service;
 
-
+import com.puzzling.puzzlingServer.api.project.dto.request.ProjectJoinRequestDto;
 import com.puzzling.puzzlingServer.api.project.dto.request.ProjectRegisterRequestDto;
 import com.puzzling.puzzlingServer.api.project.dto.response.*;
 
@@ -26,5 +26,11 @@ public interface ProjectService {
 
     //* 팀원 회고 랭킹 조회
     List<ProjectTeamRankResponseDto> getTeamRank(Long projectId);
+
+    //* 프로젝트 참여
+    ProjectJoinResponseDto joinProject(Long memberId, ProjectJoinRequestDto projectJoinRequestDto);
+
+    //* 프로젝트 주기 조회
+    ProjectCycleResponseDto getProjectCycle(Long projectId);
 
 }
