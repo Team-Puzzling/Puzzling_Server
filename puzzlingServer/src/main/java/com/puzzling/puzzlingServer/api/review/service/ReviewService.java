@@ -1,6 +1,7 @@
 package com.puzzling.puzzlingServer.api.review.service;
 
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.MyReviewProjectResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
@@ -23,4 +24,6 @@ public interface ReviewService {
     ReviewPreviousTemplateResponseDto getPreviousReviewTemplate(Long memberId, Long projectId);
 
     List<ReviewActionPlanResponseDto> getReviewActionPlans(Long memberId, Long projectId);
+
+    List<MyReviewProjectResponseDto> getMyReviewProjects(Long memberId, Long projectId);
 }
