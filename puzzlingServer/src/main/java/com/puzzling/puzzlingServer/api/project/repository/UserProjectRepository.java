@@ -19,4 +19,6 @@ public interface UserProjectRepository extends JpaRepository<UserProject, Long> 
     List<UserProject> findAllByProjectIdOrderByReviewCountDesc(Long projectId);
 
     Boolean existsByMemberIdAndProjectId(Long memberId, Long projectId);
+
+    boolean existsByProjectIdAndNickname(Long projectId, String memberProjectNickname);
 }
