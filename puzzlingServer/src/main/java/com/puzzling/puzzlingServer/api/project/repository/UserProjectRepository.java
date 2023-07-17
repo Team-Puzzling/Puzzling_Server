@@ -16,4 +16,6 @@ public interface UserProjectRepository extends JpaRepository<UserProject, Long> 
 
     Optional<UserProject> findByMemberIdAndProjectId(Long memberId, Long projectId);
 
+    List<UserProject> findAllByProjectIdOrderByReviewCountDesc(Long projectId);
+
 }

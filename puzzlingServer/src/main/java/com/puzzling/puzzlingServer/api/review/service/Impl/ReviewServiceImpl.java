@@ -70,6 +70,7 @@ public class ReviewServiceImpl implements ReviewService {
         ReviewTemplate reviewTemplate = findReviewTemplateById(reviewTILRequestDto.getReviewTemplateId());
 
         userProject.updatePreviousTemplateId(reviewTILRequestDto.getReviewTemplateId());
+        userProject.addReviewCount();
 
         Review review = Review.builder()
                 .userProject(userProject)
@@ -100,6 +101,7 @@ public class ReviewServiceImpl implements ReviewService {
         ReviewTemplate reviewTemplate = findReviewTemplateById(review5FRequestDto.getReviewTemplateId());
 
         userProject.updatePreviousTemplateId(review5FRequestDto.getReviewTemplateId());
+        userProject.addReviewCount();
 
         Review review = Review.builder()
                 .userProject(userProject)
@@ -132,6 +134,7 @@ public class ReviewServiceImpl implements ReviewService {
         ReviewTemplate reviewTemplate = findReviewTemplateById(reviewAARRequestDto.getReviewTemplateId());
 
         userProject.updatePreviousTemplateId(reviewAARRequestDto.getReviewTemplateId());
+        userProject.addReviewCount();
 
         Review review = Review.builder()
                 .userProject(userProject)

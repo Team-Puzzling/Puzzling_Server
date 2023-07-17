@@ -3,9 +3,11 @@ package com.puzzling.puzzlingServer.api.project.domain;
 import com.puzzling.puzzlingServer.api.member.domain.Member;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTemplate;
 import com.puzzling.puzzlingServer.common.entity.BaseTimeEntity;
+import io.micrometer.core.annotation.Counted;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -25,6 +27,9 @@ public class UserProject extends BaseTimeEntity {
 
     @Column(nullable = false, length = 10)
     private String nickname;
+
+    @Column(name = "review_count", columnDefinition = "integer default 0")
+    private int reviewCount;
 
     @Column(name = "leader_or_not", nullable = false)
     private Boolean leaderOrNot;
@@ -54,4 +59,6 @@ public class UserProject extends BaseTimeEntity {
     public void updatePreviousTemplateId(Long reviewTemplateId) {
         this.reviewTemplateId = reviewTemplateId;
     }
+
+    public void addReviewCount() { this.reviewCount++; }
 }

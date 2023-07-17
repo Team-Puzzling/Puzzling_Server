@@ -1,5 +1,6 @@
 package com.puzzling.puzzlingServer.api.project.controller;
 
+
 import com.puzzling.puzzlingServer.api.project.dto.request.*;
 import com.puzzling.puzzlingServer.api.project.dto.response.*;
 import com.puzzling.puzzlingServer.api.project.service.ProjectService;
@@ -37,10 +38,16 @@ public class ProjectController {
     public ApiResponse<ProjectTeamPuzzleResponseDto> getTeamPuzzles(Principal principal, @PathVariable Long projectId, @RequestParam String today) {
         return ApiResponse.success(SuccessStatus.GET_PROJECT_TEAM_PUZZLE_SUCCESS, projectService.getTeamPuzzles(principal, projectId, today));
     }
+
     
     @PostMapping("member/{memberId}/project")
     public ApiResponse<ProjectRegisterResponseDto> createProject(@PathVariable("memberId") Long memberId, @Valid @RequestBody ProjectRegisterRequestDto projectRegisterRequestDto) {
-       projectService.createProject(memberId, projectRegisterRequestDto);
-       return ApiResponse.success(SuccessStatus.POST_PROJECT_SUCCESS.getStatusCode(), SuccessStatus.POST_PROJECT_SUCCESS.getMessage());
+        projectService.createProject(memberId, projectRegisterRequestDto);
+        return ApiResponse.success(SuccessStatus.POST_PROJECT_SUCCESS.getStatusCode(), SuccessStatus.POST_PROJECT_SUCCESS.getMessage());
+    }
+
+    @GetMapping("project/{projectId}/rank")
+    public ApiResponse<ProjectTeamRankResponseDto> getTeamRank(@PathVariable Long projectId) {
+        return ApiResponse.success(SuccessStatus.GET_PROJECT_TEAM_RANK_SUCCESS, projectService.getTeamRank(projectId));
     }
 }

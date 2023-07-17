@@ -123,7 +123,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (Map.Entry<String, Integer> entry : sortedReviewCountMap.entrySet()) {
             String reviewMemberPercent = getReviewMemberPercent(projectId, entry.getValue());
             teamPuzzleBoard.add(TeamPuzzleObjectDto.of(entry.getKey(),
-                    reviewMemberPercent, "puzzle"+reviewMemberPercent+idx++));
+                    reviewMemberPercent, "puzzle" + reviewMemberPercent + idx++));
         }
 
         if (isReviewDay) {
@@ -137,7 +137,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     @Override
     @Transactional
-    public ProjectRegisterResponseDto createProject(Long memberId, ProjectRegisterRequestDto projectRegisterRequestDto){
+    public ProjectRegisterResponseDto createProject(Long memberId, ProjectRegisterRequestDto projectRegisterRequestDto) {
         String inviteCode = makeShortUUID();
         String cycle = convertReviewCycleToString(projectRegisterRequestDto.getReviewCycle());
 
@@ -163,6 +163,15 @@ public class ProjectServiceImpl implements ProjectService {
                 .build();
         userProjectRepository.save(userProject);
         return new ProjectRegisterResponseDto(cycle);
+    }
+    public List<ProjectTeamRankResponseDto> getTeamRank(Long projectId) {
+        List<UserProject> findUserProjects = userProjectRepository.findAllByProjectIdOrderByReviewCountDesc(projectId);
+        List<ProjectTeamRankResponseDto> result = new ArrayList<>();
+        int idx = 1;
+        for (UserProject userProject : findUserProjects) {
+            result.add(ProjectTeamRankResponseDto.of(idx++, userProject));
+        }
+        return result;
     }
 
     private String getReviewMemberPercent(Long projectId, int reviewCount) {
