@@ -25,6 +25,7 @@ public enum SuccessStatus {
     GET_PROJECT_TEAM_PUZZLE_SUCCESS(HttpStatus.OK, "팀 대시보드 퍼즐 조회 성공"),
     POST_PROJECT_SUCCESS(HttpStatus.OK, "프로젝트 등록 성공"),
     JOIN_PROJECT_SUCCESS(HttpStatus.OK, "프로젝트 참여 성공"),
+    GET_PROJECT_CYCLE_SUCCESS(HttpStatus.OK,"프로젝트 회고 주기 조회 성공"),
 
     /**
      * review

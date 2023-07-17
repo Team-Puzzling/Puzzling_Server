@@ -49,4 +49,9 @@ public class ProjectController {
         projectService.joinProject(memberId, projectJoinRequestDto);
         return ApiResponse.success(SuccessStatus.JOIN_PROJECT_SUCCESS.getStatusCode(), SuccessStatus.JOIN_PROJECT_SUCCESS.getMessage());
     }
+
+    @GetMapping("project/{projectId}/cycle")
+    public ApiResponse<ProjectCycleResponseDto>getProjectCycle(@PathVariable("projectId")Long projectId) {
+        return ApiResponse.success(SuccessStatus.GET_PROJECT_CYCLE_SUCCESS, projectService.getProjectCycle(projectId));
+    }
 }

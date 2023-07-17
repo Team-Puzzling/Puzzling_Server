@@ -24,5 +24,9 @@ public interface ProjectService {
     //* 프로젝트 생성
     ProjectRegisterResponseDto createProject(Long memberId, ProjectRegisterRequestDto projectRegisterRequestDto);
 
+    //* 프로젝트 참여
     ProjectJoinResponseDto joinProject(Long memberId, ProjectJoinRequestDto projectJoinRequestDto);
+
+    //* 프로젝트 주기 조회
+    ProjectCycleResponseDto getProjectCycle(Long projectId);
 }
