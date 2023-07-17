@@ -11,14 +11,11 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
-
 import static com.puzzling.puzzlingServer.common.response.ErrorStatus.KAKAO_UNAUTHORIZED_USER;
-import static com.puzzling.puzzlingServer.common.response.ErrorStatus.VALIDATION_PATH_MISSING_EXCEPTION;
 
 @RestControllerAdvice
 public class ControllerExceptionAdvice {

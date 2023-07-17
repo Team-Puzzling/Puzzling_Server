@@ -1,13 +1,10 @@
 package com.puzzling.puzzlingServer.api.project.domain;
 
 import com.puzzling.puzzlingServer.api.member.domain.Member;
-import com.puzzling.puzzlingServer.api.template.domain.ReviewTemplate;
 import com.puzzling.puzzlingServer.common.entity.BaseTimeEntity;
-import io.micrometer.core.annotation.Counted;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
