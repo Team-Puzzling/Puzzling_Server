@@ -3,6 +3,7 @@ package com.puzzling.puzzlingServer.api.project.service.Impl;
 import com.puzzling.puzzlingServer.api.member.domain.Member;
 import com.puzzling.puzzlingServer.api.member.repository.MemberRepository;
 import com.puzzling.puzzlingServer.api.project.domain.UserProject;
+import com.puzzling.puzzlingServer.api.project.dto.request.ProjectRegisterRequestDto;
 import com.puzzling.puzzlingServer.api.project.dto.response.*;
 import com.puzzling.puzzlingServer.api.project.repository.ProjectRepository;
 import com.puzzling.puzzlingServer.api.project.domain.Project;
@@ -15,13 +16,16 @@ import com.puzzling.puzzlingServer.common.exception.NotFoundException;
 import com.puzzling.puzzlingServer.common.response.ErrorStatus;
 import com.puzzling.puzzlingServer.common.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.ByteBuffer;
 import java.security.Principal;
+import java.security.SecureRandom;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -131,6 +135,36 @@ public class ProjectServiceImpl implements ProjectService {
                 isReviewDay, hasTodayReview);
     }
 
+    @Override
+    @Transactional
+    public ProjectRegisterResponseDto createProject(Long memberId, ProjectRegisterRequestDto projectRegisterRequestDto){
+        String inviteCode = makeShortUUID();
+        String cycle = convertReviewCycleToString(projectRegisterRequestDto.getReviewCycle());
+
+        Project project = Project.builder()
+                .name(projectRegisterRequestDto.getProjectName())
+                .intro(projectRegisterRequestDto.getProjectIntro())
+                .startDate(projectRegisterRequestDto.getProjectStartDate())
+                .code(inviteCode)
+                .createUserId(memberId)
+                .reviewCycle(cycle)
+                .build();
+        Project savedProject = projectRepository.save(project);
+
+        Member member = findMemberById(memberId);
+
+        UserProject userProject = UserProject.builder()
+                .role(projectRegisterRequestDto.getMemberProjectRole())
+                .nickname(projectRegisterRequestDto.getMemberProjectNickname())
+                .leaderOrNot(Boolean.TRUE)
+                .reviewTemplateId(0L)
+                .member(member)
+                .project(savedProject)
+                .build();
+        userProjectRepository.save(userProject);
+        return new ProjectRegisterResponseDto(cycle);
+    }
+
     private String getReviewMemberPercent(Long projectId, int reviewCount) {
         int totalProjectMember = userProjectRepository.findAllByProjectId(projectId).size();
         float percent = (float) reviewCount/totalProjectMember;
@@ -173,4 +207,29 @@ public class ProjectServiceImpl implements ProjectService {
         return ProjectMyPuzzleObjectDto.of(findMember.getName(), puzzleCount);
     }
 
+    // 10자리의 UUID 생성
+    public static String makeShortUUID() {
+        UUID uuid = UUID.randomUUID();
+        return parseToShortUUID(uuid.toString());
+    }
+
+    // 파라미터로 받은 값을 10자리의 UUID로 변환
+    public static String parseToShortUUID(String uuid) {
+        int l = ByteBuffer.wrap(uuid.getBytes()).getInt();
+        return Integer.toString(l, 9);
+    }
+
+    public String convertReviewCycleToString(String[] array) {
+        if (array == null || array.length == 0) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < array.length; i++) {
+            sb.append(array[i]);
+            if (i < array.length - 1) {
+                sb.append(",");
+            }
+        }
+        return sb.toString();
+    }
 }
