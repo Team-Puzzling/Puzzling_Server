@@ -190,6 +190,16 @@ public class ProjectServiceImpl implements ProjectService {
         return new ProjectJoinResponseDto(projectJoinRequestDto.getProjectId());
     }
 
+    @Override
+    @Transactional
+    public ProjectCycleResponseDto getProjectCycle(Long projectId) {
+        Project project = findProjectById(projectId);
+        String name = project.getName();
+        String cycle = project.getReviewCycle();
+
+        return new ProjectCycleResponseDto(name,cycle);
+    }
+
     private String getReviewMemberPercent(Long projectId, int reviewCount) {
         int totalProjectMember = userProjectRepository.findAllByProjectId(projectId).size();
         float percent = (float) reviewCount/totalProjectMember;
