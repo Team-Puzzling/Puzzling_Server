@@ -158,7 +158,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .role(projectRegisterRequestDto.getMemberProjectRole())
                 .nickname(projectRegisterRequestDto.getMemberProjectNickname())
                 .leaderOrNot(Boolean.TRUE)
-                .reviewTemplateId(0L)
+                .reviewTemplateId(1L)
                 .member(member)
                 .project(savedProject)
                 .build();
