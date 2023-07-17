@@ -1,13 +1,9 @@
 package com.puzzling.puzzlingServer.api.review.controller;
 
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
-import com.puzzling.puzzlingServer.api.review.dto.response.MyReviewProjectResponseDto;
-import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanResponseDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.*;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
-import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
 
-import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTeamStatusResponseDto;
-import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
 import com.puzzling.puzzlingServer.common.response.ApiResponse;
@@ -63,6 +59,12 @@ public class ReviewController {
     public ApiResponse<ReviewTeamStatusResponseDto> getTeamReviewStatus(@PathVariable Long projectId, @RequestParam String startDate,
                                                                         @RequestParam String endDate) {
         return ApiResponse.success(SuccessStatus.GET_REVIEW_TEAM_STATUS_SUCCESS, reviewService.getTeamReviewStatus(projectId, startDate, endDate));
+    }
+
+    @GetMapping("member/{memberId}/project/{projectId}/team/review")
+    public ApiResponse<ReviewDetailResponseDto> getMyReviewDetail(@PathVariable Long memberId, @PathVariable Long projectId,
+                                                                  @RequestParam String startDate, @RequestParam String endDate) {
+        return ApiResponse.success(SuccessStatus.GET_MY_REVIEWS_DETAIL_SUCCESS, reviewService.getMyReviewDetail(memberId, projectId, startDate, endDate));
     }
 
     @GetMapping("member/{memberId}/project/{projectId}/review")

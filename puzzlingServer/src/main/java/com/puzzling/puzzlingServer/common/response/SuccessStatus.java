@@ -36,7 +36,8 @@ public enum SuccessStatus {
     GET_REVIEW_PREVIOUS_TEMPLATE_SUCCESS(HttpStatus.OK, "이전 회고 템플릿 조회 성공"),
     GET_REVIEW_ACTION_PLAN_SUCCESS(HttpStatus.OK, "ACTIONPLAN 내용 조회 성공"),
     GET_REVIEW_TEAM_STATUS_SUCCESS(HttpStatus.OK, "팀원 회고 상황 조회 성공"),
-    GET_PROJECT_MY_REVIEWS_SUCCESS(HttpStatus.OK, "해당 프로젝트 내 회고 리스트 조회 성공")
+    GET_PROJECT_MY_REVIEWS_SUCCESS(HttpStatus.OK, "해당 프로젝트 내 회고 리스트 조회 성공"),
+    GET_MY_REVIEWS_DETAIL_SUCCESS(HttpStatus.OK, "회고 상세 조회 성공")
     ;
 
     private final HttpStatus httpStatus;
