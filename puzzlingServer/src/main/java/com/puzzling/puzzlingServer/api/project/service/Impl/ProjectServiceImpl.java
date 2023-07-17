@@ -17,7 +17,6 @@ import com.puzzling.puzzlingServer.common.exception.NotFoundException;
 import com.puzzling.puzzlingServer.common.response.ErrorStatus;
 import com.puzzling.puzzlingServer.common.util.MemberUtil;
 import lombok.RequiredArgsConstructor;
-import org.apache.catalina.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -26,13 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.ByteBuffer;
 import java.security.Principal;
-import java.security.SecureRandom;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.puzzling.puzzlingServer.common.util.DateUtil.checkTodayIsReviewDay;
 
 @Service
 @RequiredArgsConstructor
@@ -74,7 +70,7 @@ public class ProjectServiceImpl implements ProjectService {
         Page<Review> pageReviews = reviewRepository.findTop15ByMemberIdAndProjectId(memberId, projectId, pageable);
         List<Review> top15Reviews = pageReviews.getContent();
 
-        Boolean isReviewDay = checkTodayIsReviewDay(today, projectId);
+        Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
 
         List<PuzzleObjectDto> result = new ArrayList<>();
@@ -99,7 +95,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
         }
         Long memberId = MemberUtil.getMemberId(principal);
-        Boolean isReviewDay = checkTodayIsReviewDay(today, projectId);
+        Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
         List<Review> reviews = reviewRepository.findAllByProjectIdOrderByReviewDateAsc(projectId);
 
@@ -184,6 +180,9 @@ public class ProjectServiceImpl implements ProjectService {
         if (userProjectRepository.existsByMemberIdAndProjectId(memberId, projectJoinRequestDto.getProjectId())){
             throw new BadRequestException(("이미 프로젝트에 참여한 팀원입니다."));
         }
+        if (userProjectRepository.existsByProjectIdAndNickname(projectJoinRequestDto.getProjectId(),projectJoinRequestDto.getMemberProjectNickname())){
+            throw new BadRequestException(("이미 프로젝트에 있는 닉네임입니다."));
+        }
         Member member = findMemberById(memberId);
         Project project = findProjectById(projectJoinRequestDto.getProjectId());
 
@@ -230,19 +229,6 @@ public class ProjectServiceImpl implements ProjectService {
     private Project findProjectById(Long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_PROJECT.getMessage()));
-    }
-
-    private Boolean checkTodayIsReviewDay (String today, Long projectId) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate todayDate = LocalDate.parse(today, formatter);
-
-        DayOfWeek dayOfWeek = todayDate.getDayOfWeek();
-        Locale koreanLocale = new Locale("ko", "KR");
-        String dayOfWeekKorean = dayOfWeek.getDisplayName(TextStyle.SHORT, koreanLocale);
-
-        String reviewCycle = findProjectById(projectId).getReviewCycle();
-        List<String> weekdayList = Arrays.asList(reviewCycle.split(","));
-        return weekdayList.contains(dayOfWeekKorean);
     }
 
     private ProjectMyPuzzleObjectDto mapperMyPuzzleObject(Long memberId, Long projectId) {

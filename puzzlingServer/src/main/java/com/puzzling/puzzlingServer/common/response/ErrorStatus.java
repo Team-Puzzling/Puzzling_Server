@@ -3,7 +3,6 @@ package com.puzzling.puzzlingServer.common.response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)

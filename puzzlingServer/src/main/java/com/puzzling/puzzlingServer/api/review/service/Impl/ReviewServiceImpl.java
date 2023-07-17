@@ -1,14 +1,18 @@
 package com.puzzling.puzzlingServer.api.review.service.Impl;
 
+import com.puzzling.puzzlingServer.api.project.domain.Project;
 import com.puzzling.puzzlingServer.api.project.domain.UserProject;
+import com.puzzling.puzzlingServer.api.project.repository.ProjectRepository;
 import com.puzzling.puzzlingServer.api.project.repository.UserProjectRepository;
 import com.puzzling.puzzlingServer.api.review.domain.Review;
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.*;
+
+import com.puzzling.puzzlingServer.api.review.dto.response.MyReviewProjectResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanResponseDto;
+
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 
-import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
-import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
@@ -18,7 +22,6 @@ import com.puzzling.puzzlingServer.api.template.Repository.ReviewAARRepository;
 import com.puzzling.puzzlingServer.api.template.Repository.ReviewTILRepository;
 import com.puzzling.puzzlingServer.api.template.Repository.ReviewTemplateRepository;
 
-import com.puzzling.puzzlingServer.api.template.Repository.*;
 
 import com.puzzling.puzzlingServer.api.template.domain.Review5F;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewAAR;
@@ -33,10 +36,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.puzzling.puzzlingServer.common.response.ErrorStatus.NOT_FOUND_PROJECT;
+import static com.puzzling.puzzlingServer.common.util.DateUtil.checkTodayIsReviewDay;
+import static com.puzzling.puzzlingServer.common.util.DateUtil.getDayOfWeek;
 
 
 @Service
@@ -49,6 +56,8 @@ public class ReviewServiceImpl implements ReviewService {
     private final Review5FRepository review5FRepository;
     private final ReviewAARRepository reviewAARRepository;
     private final ReviewRepository reviewRepository;
+    private final ProjectRepository projectRepository;
+
     @Override
     @Transactional
     public List<ReviewTemplateGetResponseDto> getReviewTemplateAll() {
@@ -156,6 +165,8 @@ public class ReviewServiceImpl implements ReviewService {
         reviewARRRepository.save(reviewAAR);
     }
 
+    @Override
+    @Transactional
     public ReviewPreviousTemplateResponseDto getPreviousReviewTemplate(Long memberId, Long projectId) {
         UserProject findUserProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
         return ReviewPreviousTemplateResponseDto.of(findUserProject.getReviewTemplateId());
@@ -191,6 +202,69 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    public List<ReviewTeamStatusResponseDto> getTeamReviewStatus(Long projectId, String startDate, String endDate) {
+
+        List<ReviewTeamStatusResponseDto> result = new ArrayList<>();
+
+        List<UserProject> userProjects = userProjectRepository.findAllByProjectId(projectId);
+
+        String reviewCycle = findProjectById(projectId).getReviewCycle();
+
+        List<String> reviewDates = generateReviewDates(startDate, endDate, reviewCycle);
+
+        for (String reviewDate : reviewDates) {
+            List<ReviewWriterObjectDto> reviewWriters = new ArrayList<>();
+            List<ReviewWriterObjectDto> nonReviewWriters = new ArrayList<>();
+
+            for (UserProject userProject : userProjects) {
+                Long memberId = userProject.getMember().getId();
+                Optional<Review> findReview = reviewRepository.findByMemberIdAndProjectIdAndReviewDate(memberId, projectId, reviewDate);
+
+                if (findReview.isPresent()) {
+                    reviewWriters.add(ReviewWriterObjectDto.of(userProject.getNickname(), userProject.getRole()));
+                } else {
+                    nonReviewWriters.add(ReviewWriterObjectDto.of(userProject.getNickname(), userProject.getRole()));
+                }
+            }
+            result.add(ReviewTeamStatusResponseDto.of(getDayOfWeek(reviewDate), reviewDate, reviewWriters, nonReviewWriters));
+        }
+        return result;
+    }
+
+    private Project findProjectById (Long projectId) {
+        return projectRepository.findById(projectId).orElseThrow(() ->
+                new NotFoundException(NOT_FOUND_PROJECT.getMessage()));
+    }
+  
+    public List<MyReviewProjectResponseDto> getMyReviewProjects(Long memberId, Long projectId) {
+        List<Review> findReviews = reviewRepository.findAllByMemberIdAndProjectIdOrderByReviewDateDesc(memberId, projectId);
+
+        if (findReviews.isEmpty()) {
+            throw new BadRequestException("유저가 해당 프로젝트 팀원이 아닙니다.");
+        }
+        return findReviews.stream()
+                .map(findReview -> {
+                    String reviewTemplateName = findReview.getReviewTemplate().getName();
+
+                    switch (reviewTemplateName) {
+                        case "TIL":
+                            ReviewTIL reviewTIL = findReviewByReviewId(findReview.getId(), reviewTILRepository, "TIL");
+                            return MyReviewProjectResponseDto.of(findReview.getId(), findReview.getReviewDate(), reviewTIL.getActionPlan());
+                        case "5F":
+                            Review5F review5F = findReviewByReviewId(findReview.getId(), review5FRepository, "5F");
+                            return MyReviewProjectResponseDto.of(findReview.getId(), findReview.getReviewDate(), review5F.getActionPlan());
+                        case "AAR":
+                            ReviewAAR reviewAAR = findReviewByReviewId(findReview.getId(), reviewAARRepository, "AAR");
+                            return MyReviewProjectResponseDto.of(findReview.getId(), findReview.getReviewDate(), reviewAAR.getActionPlan());
+                        default:
+                            throw new BadRequestException("올바르지 않은 리뷰 템플릿 이름: " + reviewTemplateName);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
     private ReviewTemplate findReviewTemplateById (Long reviewTemplateId) {
         return reviewTemplateRepository.findById(reviewTemplateId)
                 .orElseThrow(() -> new NotFoundException("해당하는 회고 팀플릿이 없습니다."));
@@ -214,4 +288,19 @@ public class ReviewServiceImpl implements ReviewService {
             throw new NotFoundException(reviewTemplate + " 형식으로 작성한 회고를 찾을 수 없습니다.");
         }
     }
+
+    private List<String> generateReviewDates(String startDate, String endDate, String reviewCycle) {
+        LocalDate start = LocalDate.parse(startDate, DateTimeFormatter.ISO_DATE);
+        LocalDate end = LocalDate.parse(endDate, DateTimeFormatter.ISO_DATE);
+
+        List<String> reviewDates = new ArrayList<>();
+
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            if (checkTodayIsReviewDay( date.format(DateTimeFormatter.ISO_DATE), reviewCycle)) {
+                reviewDates.add(date.format(DateTimeFormatter.ISO_DATE));
+            }
+        }
+        return reviewDates;
+    }
+
 }
