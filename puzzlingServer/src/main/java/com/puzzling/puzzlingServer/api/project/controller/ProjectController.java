@@ -43,4 +43,10 @@ public class ProjectController {
        projectService.createProject(memberId, projectRegisterRequestDto);
        return ApiResponse.success(SuccessStatus.POST_PROJECT_SUCCESS.getStatusCode(), SuccessStatus.POST_PROJECT_SUCCESS.getMessage());
     }
+
+    @PostMapping("member/{memberId}/project/join")
+    public ApiResponse<ProjectJoinResponseDto>joinProject(@PathVariable("memberId") Long memberId, @Valid @RequestBody ProjectJoinRequestDto projectJoinRequestDto) {
+        projectService.joinProject(memberId, projectJoinRequestDto);
+        return ApiResponse.success(SuccessStatus.JOIN_PROJECT_SUCCESS.getStatusCode(), SuccessStatus.JOIN_PROJECT_SUCCESS.getMessage());
+    }
 }

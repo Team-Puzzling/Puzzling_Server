@@ -1,5 +1,6 @@
 package com.puzzling.puzzlingServer.api.project.service;
 
+import com.puzzling.puzzlingServer.api.project.dto.request.ProjectJoinRequestDto;
 import com.puzzling.puzzlingServer.api.project.dto.request.ProjectRegisterRequestDto;
 import com.puzzling.puzzlingServer.api.project.dto.response.*;
 
@@ -22,4 +23,6 @@ public interface ProjectService {
 
     //* 프로젝트 생성
     ProjectRegisterResponseDto createProject(Long memberId, ProjectRegisterRequestDto projectRegisterRequestDto);
+
+    ProjectJoinResponseDto joinProject(Long memberId, ProjectJoinRequestDto projectJoinRequestDto);
 }
