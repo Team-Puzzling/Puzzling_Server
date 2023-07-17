@@ -34,6 +34,8 @@ import java.time.format.TextStyle;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.puzzling.puzzlingServer.common.util.DateUtil.checkTodayIsReviewDay;
+
 @Service
 @RequiredArgsConstructor
 public class ProjectServiceImpl implements ProjectService {
@@ -74,7 +76,7 @@ public class ProjectServiceImpl implements ProjectService {
         Page<Review> pageReviews = reviewRepository.findTop15ByMemberIdAndProjectId(memberId, projectId, pageable);
         List<Review> top15Reviews = pageReviews.getContent();
 
-        Boolean isReviewDay = checkTodayIsReviewDay(today, projectId);
+        Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
 
         List<PuzzleObjectDto> result = new ArrayList<>();
@@ -99,7 +101,7 @@ public class ProjectServiceImpl implements ProjectService {
             throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
         }
         Long memberId = MemberUtil.getMemberId(principal);
-        Boolean isReviewDay = checkTodayIsReviewDay(today, projectId);
+        Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
         List<Review> reviews = reviewRepository.findAllByProjectIdOrderByReviewDateAsc(projectId);
 
@@ -230,19 +232,6 @@ public class ProjectServiceImpl implements ProjectService {
     private Project findProjectById(Long projectId) {
         return projectRepository.findById(projectId)
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_PROJECT.getMessage()));
-    }
-
-    private Boolean checkTodayIsReviewDay (String today, Long projectId) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate todayDate = LocalDate.parse(today, formatter);
-
-        DayOfWeek dayOfWeek = todayDate.getDayOfWeek();
-        Locale koreanLocale = new Locale("ko", "KR");
-        String dayOfWeekKorean = dayOfWeek.getDisplayName(TextStyle.SHORT, koreanLocale);
-
-        String reviewCycle = findProjectById(projectId).getReviewCycle();
-        List<String> weekdayList = Arrays.asList(reviewCycle.split(","));
-        return weekdayList.contains(dayOfWeekKorean);
     }
 
     private ProjectMyPuzzleObjectDto mapperMyPuzzleObject(Long memberId, Long projectId) {

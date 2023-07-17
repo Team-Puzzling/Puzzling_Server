@@ -5,6 +5,7 @@ import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanRespo
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
 
+import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTeamStatusResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewTemplateGetResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
 
@@ -23,4 +24,6 @@ public interface ReviewService {
     ReviewPreviousTemplateResponseDto getPreviousReviewTemplate(Long memberId, Long projectId);
 
     List<ReviewActionPlanResponseDto> getReviewActionPlans(Long memberId, Long projectId);
+
+    List<ReviewTeamStatusResponseDto> getTeamReviewStatus(Long projectId, String startDate, String endDate);
 }
