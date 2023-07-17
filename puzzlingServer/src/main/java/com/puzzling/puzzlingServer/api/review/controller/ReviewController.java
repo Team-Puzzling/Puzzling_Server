@@ -1,6 +1,7 @@
 package com.puzzling.puzzlingServer.api.review.controller;
 
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.MyReviewProjectResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewPreviousTemplateResponseDto;
@@ -56,5 +57,10 @@ public class ReviewController {
     @GetMapping("member/{memberId}/project/{projectId}/actionplan")
     public ApiResponse<ReviewActionPlanResponseDto> getReviewActionPlans(@PathVariable Long memberId, @PathVariable Long projectId) {
         return ApiResponse.success(SuccessStatus.GET_REVIEW_ACTION_PLAN, reviewService.getReviewActionPlans(memberId, projectId));
+    }
+
+    @GetMapping("member/{memberId}/project/{projectId}/review")
+    public ApiResponse<MyReviewProjectResponseDto> getMyReviewProjects(@PathVariable Long memberId, @PathVariable Long projectId) {
+        return ApiResponse.success(SuccessStatus.GET_MY_REVIEW_PROJECT, reviewService.getMyReviewProjects(memberId, projectId));
     }
 }

@@ -4,6 +4,7 @@ import com.puzzling.puzzlingServer.api.project.domain.UserProject;
 import com.puzzling.puzzlingServer.api.project.repository.UserProjectRepository;
 import com.puzzling.puzzlingServer.api.review.domain.Review;
 import com.puzzling.puzzlingServer.api.review.dto.request.Review5FRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.MyReviewProjectResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanResponseDto;
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 
@@ -184,6 +185,35 @@ public class ReviewServiceImpl implements ReviewService {
                         case "AAR":
                             ReviewAAR reviewAAR = findReviewByReviewId(findReview.getId(), reviewAARRepository, "AAR");
                             return ReviewActionPlanResponseDto.of(reviewAAR.getActionPlan(), findReview.getReviewDate());
+                        default:
+                            throw new BadRequestException("올바르지 않은 리뷰 템플릿 이름: " + reviewTemplateName);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public List<MyReviewProjectResponseDto> getMyReviewProjects(Long memberId, Long projectId) {
+        List<Review> findReviews = reviewRepository.findAllByMemberIdAndProjectIdOrderByReviewDateDesc(memberId, projectId);
+
+        if (findReviews.isEmpty()) {
+            throw new BadRequestException("유저가 해당 프로젝트 팀원이 아닙니다.");
+        }
+        return findReviews.stream()
+                .map(findReview -> {
+                    String reviewTemplateName = findReview.getReviewTemplate().getName();
+
+                    switch (reviewTemplateName) {
+                        case "TIL":
+                            ReviewTIL reviewTIL = findReviewByReviewId(findReview.getId(), reviewTILRepository, "TIL");
+                            return MyReviewProjectResponseDto.of(findReview.getId(), findReview.getReviewDate(), reviewTIL.getActionPlan());
+                        case "5F":
+                            Review5F review5F = findReviewByReviewId(findReview.getId(), review5FRepository, "5F");
+                            return MyReviewProjectResponseDto.of(findReview.getId(), findReview.getReviewDate(), review5F.getActionPlan());
+                        case "AAR":
+                            ReviewAAR reviewAAR = findReviewByReviewId(findReview.getId(), reviewAARRepository, "AAR");
+                            return MyReviewProjectResponseDto.of(findReview.getId(), findReview.getReviewDate(), reviewAAR.getActionPlan());
                         default:
                             throw new BadRequestException("올바르지 않은 리뷰 템플릿 이름: " + reviewTemplateName);
                     }
