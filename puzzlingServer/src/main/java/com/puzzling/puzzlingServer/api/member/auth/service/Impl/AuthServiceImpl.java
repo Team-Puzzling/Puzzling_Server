@@ -40,44 +40,50 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
         }
 
-        SocialPlatform socialPlatform = SocialPlatform.valueOf(authRequestDto.getSocialPlatform());
-        SocialInfoDto socialData = getSocialData(socialPlatform, socialAccessToken);
+        try {
+            SocialPlatform socialPlatform = SocialPlatform.valueOf(authRequestDto.getSocialPlatform());
 
-        String refreshToken = jwtTokenProvider.generateRefreshToken();
+            SocialInfoDto socialData = getSocialData(socialPlatform, socialAccessToken);
 
-        Boolean isExistUser = isMemberBySocialId(socialData.getId());
+            String refreshToken = jwtTokenProvider.generateRefreshToken();
 
-        // 신규 유저 저장
-        if (!isExistUser.booleanValue()) {
-            Member member = Member.builder()
-                    .name(socialData.getNickname())
-                    .socialPlatform(socialPlatform)
-                    .socialId(socialData.getId())
-                    .build();
+            Boolean isExistUser = isMemberBySocialId(socialData.getId());
 
-            memberRepository.save(member);
+            // 신규 유저 저장
+            if (!isExistUser.booleanValue()) {
+                Member member = Member.builder()
+                        .name(socialData.getNickname())
+                        .socialPlatform(socialPlatform)
+                        .socialId(socialData.getId())
+                        .build();
 
-            member.updateRefreshToken(refreshToken);
+                memberRepository.save(member);
 
-        }
-        else findMemberBySocialId(socialData.getId()).updateRefreshToken(refreshToken);
+                member.updateRefreshToken(refreshToken);
 
-        // socialId를 통해서 등록된 유저 찾기
-        Member signedMember = findMemberBySocialId(socialData.getId());
+            }
+            else findMemberBySocialId(socialData.getId()).updateRefreshToken(refreshToken);
 
-        Authentication authentication = new UserAuthentication(signedMember.getId(), null, null);
+            // socialId를 통해서 등록된 유저 찾기
+            Member signedMember = findMemberBySocialId(socialData.getId());
 
-        String accessToken = jwtTokenProvider.generateAccessToken(authentication);
+            Authentication authentication = new UserAuthentication(signedMember.getId(), null, null);
 
-        String name = signedMember.getName();
-        List<UserProject> userProjectList = userProjectRepository.findByMemberIdOrderByCreatedAtDesc(signedMember.getId());
+            String accessToken = jwtTokenProvider.generateAccessToken(authentication);
 
-        if (userProjectList.isEmpty()) {
-            return AuthResponseDto.of(name, signedMember.getId(),null,
+            String name = signedMember.getName();
+            List<UserProject> userProjectList = userProjectRepository.findByMemberIdOrderByCreatedAtDesc(signedMember.getId());
+
+            if (userProjectList.isEmpty()) {
+                return AuthResponseDto.of(name, signedMember.getId(),null,
+                        accessToken, refreshToken, !isExistUser);
+            }
+            return AuthResponseDto.of(name, signedMember.getId(), userProjectList.get(0).getProject().getId(),
                     accessToken, refreshToken, !isExistUser);
+
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException(ErrorStatus.ANOTHER_ACCESS_TOKEN.getMessage());
         }
-        return AuthResponseDto.of(name, signedMember.getId(), userProjectList.get(0).getProject().getId(),
-                accessToken, refreshToken, !isExistUser);
     }
 
     @Override

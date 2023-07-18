@@ -15,7 +15,7 @@ public enum ErrorStatus {
     VALIDATION_REQUEST_MISSING_EXCEPTION("요청값이 입력되지 않았습니다."),
     VALIDATION_NAMING_EXCEPTION("이모지 및 특수기호 입력은 불가능합니다. 제외하여 입력해 주세요."),
     NO_TOKEN("토큰을 넣어주세요."),
-    ANOTHER_ACCESS_TOKEN("소셜 타입이 잘못되었습니다."),
+    ANOTHER_ACCESS_TOKEN("지원하지 않는 소셜 플랫폼입니다."),
     VALIDATION_PATH_MISSING_EXCEPTION("요청하는 path에 넘겨주는 variable이 입력되지 않았습니다."),
 
     /**
