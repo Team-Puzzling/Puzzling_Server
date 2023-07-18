@@ -53,6 +53,11 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public List<ProjectResponseDto> getProjectAll(Long memberId) {
         List<UserProject> userProjects = userProjectRepository.findAllByMemberIdOrderByCreatedAtDesc(memberId);
+
+        if (userProjects.isEmpty()) {
+            throw new NotFoundException(ErrorStatus.NOT_FOUND_USER_PROJECT.getMessage());
+        }
+
         return userProjects.stream()
                 .flatMap(userProject -> projectRepository.findAllById(userProject.getProject().getId()).stream())
                 .map(project -> ProjectResponseDto.of(project))
@@ -69,6 +74,10 @@ public class ProjectServiceImpl implements ProjectService {
         Pageable pageable = PageRequest.of(0, 15); // 첫 번째 페이지, 페이지 크기 15
         Page<Review> pageReviews = reviewRepository.findTop15ByMemberIdAndProjectId(memberId, projectId, pageable);
         List<Review> top15Reviews = pageReviews.getContent();
+
+        if (top15Reviews.isEmpty()) {
+            throw new NotFoundException(ErrorStatus.NOT_FOUND_USER_PROJECT.getMessage());
+        }
 
         Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
@@ -223,7 +232,7 @@ public class ProjectServiceImpl implements ProjectService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new BadRequestException(ErrorStatus.INVALID_MEMBER.getMessage()));
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_MEMBER.getMessage()));
     }
 
     private Project findProjectById(Long projectId) {
