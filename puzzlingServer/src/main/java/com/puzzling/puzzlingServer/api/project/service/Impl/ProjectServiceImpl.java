@@ -81,7 +81,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (isReviewDay) {
             if (!hasTodayReview) {
-                result.add(PuzzleObjectDto.of(null, null, "puzzleD" + result.size() + 1));
+                result.add(PuzzleObjectDto.of(null, null, "puzzleD" + (result.size() + 1)));
             }
         }
         return ProjectOwnPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), result,
