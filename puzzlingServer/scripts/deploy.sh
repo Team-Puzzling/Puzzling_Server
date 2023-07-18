@@ -41,8 +41,8 @@ then
   echo "> 현재 구동중인 애플리케이션이 없으므로 종료하지 않습니다."
 else
   echo "> kill -15 $IDLE_PID"
-  kill -15 $IDLE_PID
-  sleep 5
+  kill -9 $IDLE_PID
+  sleep 10
 fi
 
 echo "> $IDLE_PROFILE 배포"
