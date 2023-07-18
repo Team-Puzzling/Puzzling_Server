@@ -228,7 +228,9 @@ public class ReviewServiceImpl implements ReviewService {
                     nonReviewWriters.add(ReviewWriterObjectDto.of(userProject.getNickname(), userProject.getRole()));
                 }
             }
-            result.add(ReviewTeamStatusResponseDto.of(getDayOfWeek(reviewDate), reviewDate, reviewWriters, nonReviewWriters));
+
+            result.add(ReviewTeamStatusResponseDto.of(getDayOfWeek(reviewDate), reviewDate, reviewWriters.isEmpty() ? null : reviewWriters, nonReviewWriters.isEmpty() ? null : nonReviewWriters));
+
         }
         return result;
     }
