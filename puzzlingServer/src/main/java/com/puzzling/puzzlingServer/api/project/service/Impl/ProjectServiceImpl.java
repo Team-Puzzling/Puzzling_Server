@@ -71,13 +71,13 @@ public class ProjectServiceImpl implements ProjectService {
             throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
         }
 
+        if (findMemberById(memberId) == null) {
+            throw new BadRequestException(ErrorStatus.NOT_FOUND_MEMBER.getMessage());
+        }
+
         Pageable pageable = PageRequest.of(0, 15); // 첫 번째 페이지, 페이지 크기 15
         Page<Review> pageReviews = reviewRepository.findTop15ByMemberIdAndProjectId(memberId, projectId, pageable);
         List<Review> top15Reviews = pageReviews.getContent();
-
-        if (top15Reviews.isEmpty()) {
-            throw new NotFoundException(ErrorStatus.NOT_FOUND_USER_PROJECT.getMessage());
-        }
 
         Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
