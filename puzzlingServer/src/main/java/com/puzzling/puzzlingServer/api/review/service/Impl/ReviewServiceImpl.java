@@ -1,5 +1,7 @@
 package com.puzzling.puzzlingServer.api.review.service.Impl;
 
+import com.puzzling.puzzlingServer.api.member.domain.Member;
+import com.puzzling.puzzlingServer.api.member.repository.MemberRepository;
 import com.puzzling.puzzlingServer.api.project.domain.Project;
 import com.puzzling.puzzlingServer.api.project.domain.UserProject;
 import com.puzzling.puzzlingServer.api.project.repository.ProjectRepository;
@@ -29,11 +31,10 @@ import com.puzzling.puzzlingServer.api.template.domain.ReviewTIL;
 import com.puzzling.puzzlingServer.api.template.domain.ReviewTemplate;
 import com.puzzling.puzzlingServer.api.template.strategy.AARReviewTemplateStrategy;
 import com.puzzling.puzzlingServer.api.template.strategy.FiveFReviewTemplateStrategy;
-import com.puzzling.puzzlingServer.api.template.strategy.ReviewTemplateStrategy;
 import com.puzzling.puzzlingServer.api.template.strategy.TILReviewTemplateStrategy;
 import com.puzzling.puzzlingServer.common.exception.BadRequestException;
 import com.puzzling.puzzlingServer.common.exception.NotFoundException;
-import com.puzzling.puzzlingServer.common.util.DateUtil;
+import com.puzzling.puzzlingServer.common.response.ErrorStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -61,6 +62,7 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewAARRepository reviewAARRepository;
     private final ReviewRepository reviewRepository;
     private final ProjectRepository projectRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     @Transactional
@@ -179,6 +181,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     @Transactional
     public List<ReviewActionPlanResponseDto> getReviewActionPlans(Long memberId, Long projectId) {
+
+        findUserProjectByMemberIdAndProjectId(memberId, projectId);
+
         List<Review> findReviews = reviewRepository.findAllByMemberIdAndProjectIdOrderByReviewDateDesc(memberId, projectId);
 
         return findReviews.stream()
@@ -239,6 +244,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Transactional
     public List<ReviewDetailResponseDto> getMyReviewDetail(Long memberId, Long projectId, String startDate, String endDate) {
         List<ReviewDetailResponseDto> result = new ArrayList<>();
+        findMemberById(memberId);
         String reviewCycle = findProjectById(projectId).getReviewCycle();
 
         List<String> reviewDates = generateReviewDates(startDate, endDate, reviewCycle);
@@ -306,6 +312,11 @@ public class ReviewServiceImpl implements ReviewService {
                     }
                 })
                 .collect(Collectors.toList());
+    }
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_MEMBER.getMessage()));
     }
 
     private Project findProjectById (Long projectId) {
