@@ -85,12 +85,12 @@ public class ProjectServiceImpl implements ProjectService {
         List<PuzzleObjectDto> result = new ArrayList<>();
         for (int idx = 1; idx <= top15Reviews.size(); idx++) {
             Review review = top15Reviews.get(idx - 1);
-            result.add(PuzzleObjectDto.of(review.getReviewDate(), review.getId(), ("puzzleA" + idx)));
+            result.add(PuzzleObjectDto.of(review.getReviewDate(), review.getId(), ("puzzlea" + idx)));
         }
 
         if (isReviewDay) {
             if (!hasTodayReview) {
-                result.add(PuzzleObjectDto.of(null, null, "puzzleD" + (result.size() + 1)));
+                result.add(PuzzleObjectDto.of(null, null, "puzzled" + (result.size() + 1)));
             }
         }
         return ProjectOwnPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), result,
@@ -134,7 +134,7 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (isReviewDay) {
             if (!hasTodayReview) {
-                teamPuzzleBoard.add(TeamPuzzleObjectDto.of(null, null, "puzzleD" + (teamPuzzleBoard.size()+1)));
+                teamPuzzleBoard.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (teamPuzzleBoard.size()+1)));
             }
         }
         return ProjectTeamPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), teamPuzzleBoard,
@@ -223,11 +223,11 @@ public class ProjectServiceImpl implements ProjectService {
         float percent = (float) reviewCount/totalProjectMember;
 
         if (percent <= 0.334) {
-            return "A";
+            return "a";
         } else if (0.334 <= percent && percent <= 0.667 ) {
-            return "B";
+            return "b";
         } else {
-            return "C";
+            return "c";
         }
     }
 
