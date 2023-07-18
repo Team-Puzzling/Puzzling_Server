@@ -171,6 +171,7 @@ public class ProjectServiceImpl implements ProjectService {
         return ProjectRegisterResponseDto.of(inviteCode);
     }
     public List<ProjectTeamRankResponseDto> getTeamRank(Long projectId) {
+        Project projectById = findProjectById(projectId);
         List<UserProject> findUserProjects = userProjectRepository.findAllByProjectIdOrderByReviewCountDesc(projectId);
         List<ProjectTeamRankResponseDto> result = new ArrayList<>();
         int idx = 1;
