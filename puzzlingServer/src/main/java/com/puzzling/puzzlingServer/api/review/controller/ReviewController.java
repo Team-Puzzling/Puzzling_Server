@@ -67,7 +67,7 @@ public class ReviewController {
         return ApiResponse.success(SuccessStatus.GET_MY_REVIEWS_DETAIL_SUCCESS, reviewService.getMyReviewDetail(memberId, projectId, startDate, endDate));
     }
 
-    @GetMapping("member/{memberId}/project/{projectId}/review")
+    @GetMapping("member/{memberId}/project/{projectId}/reviews")
     public ApiResponse<MyReviewProjectResponseDto> getMyReviewProjects(@PathVariable Long memberId, @PathVariable Long projectId) {
         return ApiResponse.success(SuccessStatus.GET_PROJECT_MY_REVIEWS_SUCCESS, reviewService.getMyReviewProjects(memberId, projectId));
     }
