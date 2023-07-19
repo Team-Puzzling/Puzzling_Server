@@ -111,7 +111,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         return ProjectOwnPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), result,
-                pageReviews.getTotalPages() - 1, isReviewDay, hasTodayReview);
+                pageReviews.getTotalPages() - 1 < 0 ? 0 : pageReviews.getTotalPages() , isReviewDay, hasTodayReview);
     }
 
     @Override
@@ -177,7 +177,7 @@ public class ProjectServiceImpl implements ProjectService {
             lastPageValues.add(TeamPuzzleObjectDto.of(null, null, ("puzzlee" + i)));
         }
         return ProjectTeamPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), lastPageValues,
-                lastPageNumber, isReviewDay, hasTodayReview);
+                lastPageNumber < 0 ? 0 : lastPageNumber, isReviewDay, hasTodayReview);
     }
 
     @Override
@@ -209,6 +209,7 @@ public class ProjectServiceImpl implements ProjectService {
         userProjectRepository.save(userProject);
         return ProjectRegisterResponseDto.of(inviteCode, savedProject.getId());
     }
+
     public List<ProjectTeamRankResponseDto> getTeamRank(Long projectId) {
         Project projectById = findProjectById(projectId);
         List<UserProject> findUserProjects = userProjectRepository.findAllByProjectIdOrderByReviewCountDesc(projectId);
