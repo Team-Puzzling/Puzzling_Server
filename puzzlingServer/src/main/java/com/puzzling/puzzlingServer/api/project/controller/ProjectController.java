@@ -42,7 +42,6 @@ public class ProjectController {
     
     @PostMapping("member/{memberId}/project")
     public ApiResponse<ProjectRegisterResponseDto> createProject(@PathVariable("memberId") Long memberId, @Valid @RequestBody ProjectRegisterRequestDto projectRegisterRequestDto) {
-        projectService.createProject(memberId, projectRegisterRequestDto);
         return ApiResponse.success(SuccessStatus.POST_PROJECT_SUCCESS, projectService.createProject(memberId, projectRegisterRequestDto));
     }
 
