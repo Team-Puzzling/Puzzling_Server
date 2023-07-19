@@ -284,7 +284,7 @@ public class ProjectServiceImpl implements ProjectService {
     private ProjectMyPuzzleObjectDto mapperMyPuzzleObject(Long memberId, Long projectId) {
         Member findMember = findMemberById(memberId);
         int puzzleCount = reviewRepository.findByMemberIdAndProjectId(memberId, projectId).size();
-        return ProjectMyPuzzleObjectDto.of(findMember.getName(), puzzleCount);
+        return ProjectMyPuzzleObjectDto.of(findMember.getName(), puzzleCount % 15);
     }
 
     // 10자리의 UUID 생성
