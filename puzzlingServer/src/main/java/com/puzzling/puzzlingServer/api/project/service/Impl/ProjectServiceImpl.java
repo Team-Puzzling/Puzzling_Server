@@ -101,6 +101,8 @@ public class ProjectServiceImpl implements ProjectService {
                 if (idx == reviews.size() + 1) {
                     if (isReviewDay && !hasTodayReview) {
                         result.add(PuzzleObjectDto.of(today, null, "puzzled" + idx));
+                    } else {
+                        result.add(PuzzleObjectDto.of(null, null, ("puzzlee" + idx)));
                     }
                 } else {
                     result.add(PuzzleObjectDto.of(null, null, ("puzzlee" + idx)));
