@@ -14,11 +14,12 @@ import static lombok.AccessLevel.PRIVATE;
 public class ProjectTeamPuzzleResponseDto {
     private ProjectMyPuzzleObjectDto myPuzzle;
     private List<TeamPuzzleObjectDto> teamPuzzleBoard;
+    private int teamPuzzleBoardCount;
     private Boolean isReviewDay;
     private Boolean hasTodayReview;
 
     public static ProjectTeamPuzzleResponseDto of (ProjectMyPuzzleObjectDto projectMyPuzzleObjectDto, List<TeamPuzzleObjectDto> teamPuzzleBoard,
-                                                   Boolean isReviewDay, Boolean hasTodayReview) {
-        return new ProjectTeamPuzzleResponseDto (projectMyPuzzleObjectDto, teamPuzzleBoard, isReviewDay, hasTodayReview);
+                                                   int teamPuzzleBoardCount, Boolean isReviewDay, Boolean hasTodayReview) {
+        return new ProjectTeamPuzzleResponseDto (projectMyPuzzleObjectDto, teamPuzzleBoard, teamPuzzleBoardCount, isReviewDay, hasTodayReview);
     }
 }

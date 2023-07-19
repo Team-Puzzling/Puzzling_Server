@@ -75,26 +75,36 @@ public class ProjectServiceImpl implements ProjectService {
             throw new BadRequestException(ErrorStatus.NOT_FOUND_MEMBER.getMessage());
         }
 
-        Pageable pageable = PageRequest.of(0, 15); // 첫 번째 페이지, 페이지 크기 15
-        Page<Review> pageReviews = reviewRepository.findTop15ByMemberIdAndProjectId(memberId, projectId, pageable);
-        List<Review> top15Reviews = pageReviews.getContent();
+        int pageSize = 15;
+        int pageNumber = 0; // 첫 번째 페이지
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        Page<Review> pageReviews = reviewRepository.findByMemberIdAndProjectIdOrderByCreatedAt(memberId, projectId, pageable);
+        List<Review> reviews = new ArrayList<>();
+
+        if (pageReviews.getTotalPages() > 0) {
+            int lastPageNumber = pageReviews.getTotalPages() - 1;
+            pageable = PageRequest.of(lastPageNumber, pageSize);
+            pageReviews = reviewRepository.findByMemberIdAndProjectIdOrderByCreatedAt(memberId, projectId, pageable);
+            reviews = pageReviews.getContent(); // 마지막 페이지의 내용을 가져옴
+        }
 
         Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
 
         List<PuzzleObjectDto> result = new ArrayList<>();
-        for (int idx = 1; idx <= top15Reviews.size(); idx++) {
-            Review review = top15Reviews.get(idx - 1);
+        for (int idx = 1; idx <= reviews.size(); idx++) {
+            Review review = reviews.get(idx - 1);
             result.add(PuzzleObjectDto.of(review.getReviewDate(), review.getId(), ("puzzlea" + idx)));
         }
 
         if (isReviewDay) {
             if (!hasTodayReview) {
-                result.add(PuzzleObjectDto.of(null, null, "puzzled" + (result.size() + 1)));
+                result.add(PuzzleObjectDto.of(today, null, "puzzled" + (result.size() + 1)));
             }
         }
         return ProjectOwnPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), result,
-                isReviewDay, hasTodayReview);
+                pageReviews.getTotalPages() - 1, isReviewDay, hasTodayReview);
     }
 
     @Override
@@ -125,20 +135,36 @@ public class ProjectServiceImpl implements ProjectService {
         List<TeamPuzzleObjectDto> teamPuzzleBoard = new ArrayList<>();
 
         int idx = 1;
+        int pageSize = 15;
+
         // 날짜별 리뷰 개수를 배열 형태로 변환하여 저장
         for (Map.Entry<String, Integer> entry : sortedReviewCountMap.entrySet()) {
             String reviewMemberPercent = getReviewMemberPercent(projectId, entry.getValue());
+            int remainPage = (int) (idx % pageSize);
             teamPuzzleBoard.add(TeamPuzzleObjectDto.of(entry.getKey(),
-                    reviewMemberPercent, "puzzle" + reviewMemberPercent + idx++));
+                    reviewMemberPercent, "puzzle" + reviewMemberPercent + remainPage));
+            idx++;
+        }
+
+        int totalPages = (int) Math.ceil((double) teamPuzzleBoard.size() / pageSize);
+
+        int lastPageNumber = totalPages - 1;
+        List<TeamPuzzleObjectDto> lastPageValues = new ArrayList<>();
+
+        if (totalPages > 0) {
+            int startIndex = lastPageNumber * pageSize;
+            int endIndex = teamPuzzleBoard.size();
+
+            lastPageValues.addAll(teamPuzzleBoard.subList(startIndex, endIndex));
         }
 
         if (isReviewDay) {
             if (!hasTodayReview) {
-                teamPuzzleBoard.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (teamPuzzleBoard.size()+1)));
+                lastPageValues.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (lastPageValues.size() + 1)));
             }
         }
-        return ProjectTeamPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), teamPuzzleBoard,
-                isReviewDay, hasTodayReview);
+        return ProjectTeamPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), lastPageValues,
+                lastPageNumber, isReviewDay, hasTodayReview);
     }
 
     @Override
