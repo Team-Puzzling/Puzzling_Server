@@ -93,16 +93,21 @@ public class ProjectServiceImpl implements ProjectService {
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
 
         List<PuzzleObjectDto> result = new ArrayList<>();
-        for (int idx = 1; idx <= reviews.size(); idx++) {
-            Review review = reviews.get(idx - 1);
-            result.add(PuzzleObjectDto.of(review.getReviewDate(), review.getId(), ("puzzlea" + idx)));
-        }
-
-        if (isReviewDay) {
-            if (!hasTodayReview) {
-                result.add(PuzzleObjectDto.of(today, null, "puzzled" + (result.size() + 1)));
+        for (int idx = 1; idx <= pageSize; idx++) {
+            if (idx <= reviews.size()) {
+                Review review = reviews.get(idx - 1);
+                result.add(PuzzleObjectDto.of(review.getReviewDate(), review.getId(), ("puzzlea" + idx)));
+            } else {
+                if (idx == reviews.size() + 1) {
+                    if (isReviewDay && !hasTodayReview) {
+                        result.add(PuzzleObjectDto.of(today, null, "puzzled" + (result.size() + 1)));
+                    }
+                } else {
+                    result.add(PuzzleObjectDto.of(null, null, ("puzzlee" + idx)));
+                }
             }
         }
+
         return ProjectOwnPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), result,
                 pageReviews.getTotalPages() - 1, isReviewDay, hasTodayReview);
     }
@@ -156,12 +161,18 @@ public class ProjectServiceImpl implements ProjectService {
             int endIndex = teamPuzzleBoard.size();
 
             lastPageValues.addAll(teamPuzzleBoard.subList(startIndex, endIndex));
+        } else {
+            lastPageValues.addAll(teamPuzzleBoard);
         }
 
         if (isReviewDay) {
             if (!hasTodayReview) {
                 lastPageValues.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (lastPageValues.size() + 1)));
             }
+        }
+
+        for (int i = lastPageValues.size() + 1; i <= pageSize ; i++) {
+            lastPageValues.add(TeamPuzzleObjectDto.of(null, null, ("puzzlee" + i)));
         }
         return ProjectTeamPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), lastPageValues,
                 lastPageNumber, isReviewDay, hasTodayReview);
@@ -216,9 +227,9 @@ public class ProjectServiceImpl implements ProjectService {
         if (userProjectRepository.existsByProjectIdAndNickname(projectJoinRequestDto.getProjectId(),projectJoinRequestDto.getMemberProjectNickname())){
             throw new BadRequestException(("이미 프로젝트에 있는 닉네임입니다."));
         }
-        if (userProjectRepository.existsByMemberIdAndProjectId(memberId, projectJoinRequestDto.getProjectId())){
-            throw new BadRequestException(("이미 프로젝트에 참여한 팀원입니다."));
-        }
+//        if (userProjectRepository.existsByMemberIdAndProjectId(memberId, projectJoinRequestDto.getProjectId())){
+//            throw new BadRequestException(("이미 프로젝트에 참여한 팀원입니다."));
+//        }
         Member member = findMemberById(memberId);
         Project project = findProjectById(projectJoinRequestDto.getProjectId());
 
