@@ -11,8 +11,9 @@ import static lombok.AccessLevel.PRIVATE;
 @AllArgsConstructor
 public class ProjectRegisterResponseDto {
     private String projectCode;
+    private Long projectId;
 
-    public static ProjectRegisterResponseDto of (String projectCode){
-        return new ProjectRegisterResponseDto(projectCode);
+    public static ProjectRegisterResponseDto of (String projectCode, Long projectId){
+        return new ProjectRegisterResponseDto(projectCode,projectId);
     }
 }

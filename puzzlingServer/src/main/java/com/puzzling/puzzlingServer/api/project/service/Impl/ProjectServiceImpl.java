@@ -191,10 +191,10 @@ public class ProjectServiceImpl implements ProjectService {
                 .leaderOrNot(Boolean.TRUE)
                 .reviewTemplateId(1L)
                 .member(member)
-                .project(savedProject)
+                .project(project)
                 .build();
         userProjectRepository.save(userProject);
-        return ProjectRegisterResponseDto.of(inviteCode);
+        return ProjectRegisterResponseDto.of(inviteCode, savedProject.getId());
     }
     public List<ProjectTeamRankResponseDto> getTeamRank(Long projectId) {
         Project projectById = findProjectById(projectId);
