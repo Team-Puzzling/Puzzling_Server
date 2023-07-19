@@ -61,7 +61,7 @@ public class ReviewController {
         return ApiResponse.success(SuccessStatus.GET_REVIEW_TEAM_STATUS_SUCCESS, reviewService.getTeamReviewStatus(projectId, startDate, endDate));
     }
 
-    @GetMapping("member/{memberId}/project/{projectId}/team/review")
+    @GetMapping("member/{memberId}/project/{projectId}/review")
     public ApiResponse<ReviewDetailResponseDto> getMyReviewDetail(@PathVariable Long memberId, @PathVariable Long projectId,
                                                                   @RequestParam String startDate, @RequestParam String endDate) {
         return ApiResponse.success(SuccessStatus.GET_MY_REVIEWS_DETAIL_SUCCESS, reviewService.getMyReviewDetail(memberId, projectId, startDate, endDate));
