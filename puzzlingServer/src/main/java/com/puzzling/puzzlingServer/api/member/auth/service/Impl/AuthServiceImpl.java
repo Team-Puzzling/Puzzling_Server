@@ -75,10 +75,10 @@ public class AuthServiceImpl implements AuthService {
             List<UserProject> userProjectList = userProjectRepository.findByMemberIdOrderByCreatedAtDesc(signedMember.getId());
 
             if (userProjectList.isEmpty()) {
-                return AuthResponseDto.of(name, signedMember.getId(),null,
+                return AuthResponseDto.of(name, signedMember.getId(),null,null,
                         accessToken, refreshToken, !isExistUser);
             }
-            return AuthResponseDto.of(name, signedMember.getId(), userProjectList.get(0).getProject().getId(),
+            return AuthResponseDto.of(name, signedMember.getId(), userProjectList.get(0).getProject().getId(),userProjectList.get(0).getProject().getName(),
                     accessToken, refreshToken, !isExistUser);
 
         } catch (IllegalArgumentException ex) {
