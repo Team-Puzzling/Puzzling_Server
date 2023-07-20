@@ -15,13 +15,15 @@ public class AuthResponseDto {
 
     private Long projectId;
 
+    private String projectName;
+
     private String accessToken;
 
     private String refreshToken;
 
     private Boolean isNewUser;
 
-    public static AuthResponseDto of (String name, Long memberId, Long projectId, String accessToken, String refreshToken, Boolean isNewUser) {
-        return new AuthResponseDto(name, memberId, projectId, accessToken, refreshToken, isNewUser);
+    public static AuthResponseDto of (String name, Long memberId, Long projectId, String projectName, String accessToken, String refreshToken, Boolean isNewUser) {
+        return new AuthResponseDto(name, memberId, projectId, projectName, accessToken, refreshToken, isNewUser);
     }
 }
