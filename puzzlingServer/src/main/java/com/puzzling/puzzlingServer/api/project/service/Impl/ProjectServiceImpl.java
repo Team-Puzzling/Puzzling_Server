@@ -120,7 +120,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (today.equals("") || today == null) {
             throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
         }
-        Long memberId = MemberUtil.getMemberId(principal);
+        Project findProject = findProjectById(projectId);
         Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
         Boolean hasTodayReview = reviewRepository.existsReviewByReviewDate(today);
         List<Review> reviews = reviewRepository.findAllByProjectIdOrderByReviewDateAsc(projectId);
@@ -167,6 +167,8 @@ public class ProjectServiceImpl implements ProjectService {
             lastPageValues.addAll(teamPuzzleBoard);
         }
 
+        int puzzleCount = lastPageValues.size();
+
         if (isReviewDay) {
             if (!hasTodayReview) {
                 lastPageValues.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (lastPageValues.size() + 1)));
@@ -176,7 +178,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (int i = lastPageValues.size() + 1; i <= pageSize ; i++) {
             lastPageValues.add(TeamPuzzleObjectDto.of(null, null, ("puzzlee" + i)));
         }
-        return ProjectTeamPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), lastPageValues,
+        return ProjectTeamPuzzleResponseDto.of(ProjectMyPuzzleObjectDto.of(findProject.getName(), puzzleCount), lastPageValues,
                 lastPageNumber < 0 ? 0 : lastPageNumber, isReviewDay, hasTodayReview);
     }
 
