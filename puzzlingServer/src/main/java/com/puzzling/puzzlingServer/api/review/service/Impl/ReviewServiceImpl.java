@@ -76,7 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public void createReviewTIL(Long memberId, Long projectId, ReviewTILRequestDto reviewTILRequestDto) {
+    public ReviewPostResponseDto createReviewTIL(Long memberId, Long projectId, ReviewTILRequestDto reviewTILRequestDto) {
         UserProject userProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
 
         if ( reviewTILRequestDto.getReviewTemplateId() == null ) {
@@ -103,11 +103,12 @@ public class ReviewServiceImpl implements ReviewService {
                 .actionPlan(reviewTILRequestDto.getActionPlan())
                 .build();
         reviewTILRepository.save(reviewTIL);
+        return ReviewPostResponseDto.of(findProjectById(projectId).getName());
     }
 
     @Override
     @Transactional
-    public void createReview5F(Long memberId, Long projectId, Review5FRequestDto review5FRequestDto) {
+    public ReviewPostResponseDto createReview5F(Long memberId, Long projectId, Review5FRequestDto review5FRequestDto) {
         UserProject userProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
 
         if ( review5FRequestDto.getReviewTemplateId() == null ) {
@@ -136,11 +137,12 @@ public class ReviewServiceImpl implements ReviewService {
                 .actionPlan(review5FRequestDto.getActionPlan())
                 .build();
         review5FRepository.save(review5F);
+        return ReviewPostResponseDto.of(findProjectById(projectId).getName());
     }
 
     @Override
     @Transactional
-    public void createReviewAAR(Long memberId, Long projectId, ReviewAARRequestDto reviewAARRequestDto) {
+    public ReviewPostResponseDto createReviewAAR(Long memberId, Long projectId, ReviewAARRequestDto reviewAARRequestDto) {
         UserProject userProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
 
         if ( reviewAARRequestDto.getReviewTemplateId() == null ) {
@@ -169,6 +171,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .actionPlan(reviewAARRequestDto.getActionPlan())
                 .build();
         reviewARRRepository.save(reviewAAR);
+        return ReviewPostResponseDto.of(findProjectById(projectId).getName());
     }
 
     @Override

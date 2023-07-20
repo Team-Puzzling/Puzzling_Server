@@ -27,21 +27,18 @@ public class ReviewController {
     }
 
     @PostMapping("member/{memberId}/project/{projectId}/review/TIL")
-    public ApiResponse createReviewTIL(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody ReviewTILRequestDto reviewTILRequestDto){
-        reviewService.createReviewTIL(memberId, projectId, reviewTILRequestDto);
-        return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS.getStatusCode(), SuccessStatus.POST_REVIEW_SUCCESS.getMessage());
+    public ApiResponse<ReviewPostResponseDto> createReviewTIL(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody ReviewTILRequestDto reviewTILRequestDto){
+        return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS, reviewService.createReviewTIL(memberId, projectId, reviewTILRequestDto));
     }
 
     @PostMapping("member/{memberId}/project/{projectId}/review/5F")
-    public ApiResponse createReview5F(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody Review5FRequestDto review5FRequestDto){
-        reviewService.createReview5F(memberId, projectId, review5FRequestDto);
-        return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS.getStatusCode(), SuccessStatus.POST_REVIEW_SUCCESS.getMessage());
+    public ApiResponse<ReviewPostResponseDto> createReview5F(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody Review5FRequestDto review5FRequestDto){
+        return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS, reviewService.createReview5F(memberId, projectId, review5FRequestDto));
     }
 
     @PostMapping("member/{memberId}/project/{projectId}/review/AAR")
-    public ApiResponse createReviewAAR(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody ReviewAARRequestDto reviewAARRequestDto){
-        reviewService.createReviewAAR(memberId, projectId, reviewAARRequestDto);
-        return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS.getStatusCode(), SuccessStatus.POST_REVIEW_SUCCESS.getMessage());
+    public ApiResponse<ReviewPostResponseDto> createReviewAAR(@PathVariable("memberId") Long memberId,@PathVariable("projectId") Long projectId, @Valid @RequestBody ReviewAARRequestDto reviewAARRequestDto){
+        return ApiResponse.success(SuccessStatus.POST_REVIEW_SUCCESS, reviewService.createReviewAAR(memberId, projectId, reviewAARRequestDto));
     }
   
     @GetMapping("member/{memberId}/project/{projectId}/review/previous-template")

@@ -12,11 +12,11 @@ import java.util.List;
 public interface ReviewService {
     List<ReviewTemplateGetResponseDto> getReviewTemplateAll();
 
-    void createReviewTIL(Long memberId, Long projectId, ReviewTILRequestDto reviewTILRequestDto);
+    ReviewPostResponseDto createReviewTIL(Long memberId, Long projectId, ReviewTILRequestDto reviewTILRequestDto);
 
-    void createReviewAAR(Long memberId, Long projectId, ReviewAARRequestDto reviewARRRequestDto);
+    ReviewPostResponseDto createReviewAAR(Long memberId, Long projectId, ReviewAARRequestDto reviewARRRequestDto);
 
-    void createReview5F(Long memberId, Long projectId, Review5FRequestDto review5FRequestDto);
+    ReviewPostResponseDto createReview5F(Long memberId, Long projectId, Review5FRequestDto review5FRequestDto);
 
     ReviewPreviousTemplateResponseDto getPreviousReviewTemplate(Long memberId, Long projectId);
 
