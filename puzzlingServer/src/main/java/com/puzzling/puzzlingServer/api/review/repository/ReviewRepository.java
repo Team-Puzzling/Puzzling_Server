@@ -18,7 +18,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Query("SELECT r FROM Review r WHERE r.memberId = :memberId AND r.projectId = :projectId ORDER BY r.createdAt")
     Page<Review> findByMemberIdAndProjectIdOrderByCreatedAt(@Param("memberId") Long memberId, @Param("projectId") Long projectId, Pageable pageable);
 
-    boolean existsReviewByReviewDateAndMemberId(String date, Long memberId);
+    boolean existsReviewByReviewDateAndMemberIdAndProjectId(String date, Long memberId, Long projectId);
 
     List<Review> findAllByProjectIdOrderByReviewDateAsc(Long projectId);
 

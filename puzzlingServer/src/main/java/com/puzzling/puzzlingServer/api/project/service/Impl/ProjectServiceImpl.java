@@ -90,7 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
-        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDateAndMemberId(today, memberId);
+        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDateAndMemberIdAndProjectId(today, memberId, projectId);
 
         List<PuzzleObjectDto> result = new ArrayList<>();
         for (int idx = 1; idx <= pageSize; idx++) {
@@ -123,7 +123,7 @@ public class ProjectServiceImpl implements ProjectService {
         Long memberId = MemberUtil.getMemberId(principal);
         Project findProject = findProjectById(projectId);
         Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
-        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDateAndMemberId(today, memberId);
+        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDateAndMemberIdAndProjectId(today, memberId, projectId);
         List<Review> reviews = reviewRepository.findAllByProjectIdOrderByReviewDateAsc(projectId);
 
         // 날짜별 리뷰 개수를 카운트하기 위한 Map 생성
