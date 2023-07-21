@@ -90,7 +90,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
-        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDateAndMemberId(today, memberId);
+        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDateAndMemberIdAndProjectId(today, memberId, projectId);
 
         List<PuzzleObjectDto> result = new ArrayList<>();
         for (int idx = 1; idx <= pageSize; idx++) {
@@ -123,7 +123,7 @@ public class ProjectServiceImpl implements ProjectService {
         Long memberId = MemberUtil.getMemberId(principal);
         Project findProject = findProjectById(projectId);
         Boolean isReviewDay = checkTodayIsReviewDay(today, findProjectById(projectId).getReviewCycle());
-        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDateAndMemberId(today, memberId);
+        Boolean hasTodayReview = reviewRepository.existsReviewByReviewDateAndMemberIdAndProjectId(today, memberId, projectId);
         List<Review> reviews = reviewRepository.findAllByProjectIdOrderByReviewDateAsc(projectId);
 
         // 날짜별 리뷰 개수를 카운트하기 위한 Map 생성
@@ -284,10 +284,15 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_PROJECT.getMessage()));
     }
 
+    private UserProject findUserProjectByMemberIdAndProjectId (Long memberId, Long projectId) {
+        return userProjectRepository.findByMemberIdAndProjectId(memberId,projectId)
+                .orElseThrow(() -> new NotFoundException("해당하는 멤버가 참여하는 프로젝트가 아닙니다."));
+    }
+
     private ProjectMyPuzzleObjectDto mapperMyPuzzleObject(Long memberId, Long projectId) {
-        Member findMember = findMemberById(memberId);
+        UserProject findUserProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
         int puzzleCount = reviewRepository.findByMemberIdAndProjectId(memberId, projectId).size();
-        return ProjectMyPuzzleObjectDto.of(findMember.getName(), puzzleCount % 15);
+        return ProjectMyPuzzleObjectDto.of(findUserProject.getNickname(), puzzleCount % 15);
     }
 
     // 10자리의 UUID 생성
