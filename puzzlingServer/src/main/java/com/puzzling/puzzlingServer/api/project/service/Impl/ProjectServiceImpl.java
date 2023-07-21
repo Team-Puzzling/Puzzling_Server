@@ -154,6 +154,13 @@ public class ProjectServiceImpl implements ProjectService {
             idx++;
         }
 
+        if (isReviewDay) {
+            if (!hasTodayReview) {
+                teamPuzzleBoard.remove(teamPuzzleBoard.size() -1 );
+                teamPuzzleBoard.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (teamPuzzleBoard.size() + 1)));
+            }
+        }
+
         int totalPages = (int) Math.ceil((double) teamPuzzleBoard.size() / pageSize);
 
         int lastPageNumber = totalPages - 1;
@@ -162,19 +169,12 @@ public class ProjectServiceImpl implements ProjectService {
         if (totalPages > 0) {
             int startIndex = lastPageNumber * pageSize;
             int endIndex = teamPuzzleBoard.size();
-
             lastPageValues.addAll(teamPuzzleBoard.subList(startIndex, endIndex));
         } else {
             lastPageValues.addAll(teamPuzzleBoard);
         }
 
         int puzzleCount = lastPageValues.size();
-
-        if (isReviewDay) {
-            if (!hasTodayReview) {
-                lastPageValues.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (lastPageValues.size() + 1)));
-            }
-        }
 
         for (int i = lastPageValues.size() + 1; i <= pageSize ; i++) {
             lastPageValues.add(TeamPuzzleObjectDto.of(null, null, ("puzzlee" + i)));
