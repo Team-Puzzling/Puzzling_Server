@@ -284,10 +284,15 @@ public class ProjectServiceImpl implements ProjectService {
                 .orElseThrow(() -> new NotFoundException(ErrorStatus.NOT_FOUND_PROJECT.getMessage()));
     }
 
+    private UserProject findUserProjectByMemberIdAndProjectId (Long memberId, Long projectId) {
+        return userProjectRepository.findByMemberIdAndProjectId(memberId,projectId)
+                .orElseThrow(() -> new NotFoundException("해당하는 멤버가 참여하는 프로젝트가 아닙니다."));
+    }
+
     private ProjectMyPuzzleObjectDto mapperMyPuzzleObject(Long memberId, Long projectId) {
-        Member findMember = findMemberById(memberId);
+        UserProject findUserProject = findUserProjectByMemberIdAndProjectId(memberId, projectId);
         int puzzleCount = reviewRepository.findByMemberIdAndProjectId(memberId, projectId).size();
-        return ProjectMyPuzzleObjectDto.of(findMember.getName(), puzzleCount % 15);
+        return ProjectMyPuzzleObjectDto.of(findUserProject.getNickname(), puzzleCount % 15);
     }
 
     // 10자리의 UUID 생성
