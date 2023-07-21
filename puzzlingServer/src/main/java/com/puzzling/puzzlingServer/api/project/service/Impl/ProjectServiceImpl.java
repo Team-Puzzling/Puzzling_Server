@@ -111,7 +111,7 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         return ProjectOwnPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), result,
-                pageReviews.getTotalPages() - 1 < 0 ? 0 : pageReviews.getTotalPages() , isReviewDay, hasTodayReview);
+                pageReviews.getTotalPages() - 1 < 0 ? 0 : pageReviews.getTotalPages() - 1 , isReviewDay, hasTodayReview);
     }
 
     @Override
@@ -156,7 +156,9 @@ public class ProjectServiceImpl implements ProjectService {
 
         if (isReviewDay) {
             if (!hasTodayReview) {
-                teamPuzzleBoard.remove(teamPuzzleBoard.size() -1 );
+                if (teamPuzzleBoard.size() > 0) {
+                    teamPuzzleBoard.remove(teamPuzzleBoard.size() -1 );
+                }
                 teamPuzzleBoard.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (teamPuzzleBoard.size() + 1)));
             }
         }
