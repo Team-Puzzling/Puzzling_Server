@@ -159,7 +159,7 @@ public class ProjectServiceImpl implements ProjectService {
                 if (teamPuzzleBoard.size() > 0) {
                     teamPuzzleBoard.remove(teamPuzzleBoard.size() -1 );
                 }
-                teamPuzzleBoard.add(TeamPuzzleObjectDto.of(null, null, "puzzled" + (teamPuzzleBoard.size() + 1)));
+                teamPuzzleBoard.add(TeamPuzzleObjectDto.of(today, null, "puzzled" + (teamPuzzleBoard.size() + 1)));
             }
         }
 
