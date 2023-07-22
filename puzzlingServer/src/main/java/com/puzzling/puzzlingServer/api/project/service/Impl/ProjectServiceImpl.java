@@ -154,15 +154,6 @@ public class ProjectServiceImpl implements ProjectService {
             idx++;
         }
 
-        if (isReviewDay) {
-            if (!hasTodayReview) {
-                if (teamPuzzleBoard.size() > 0) {
-                    teamPuzzleBoard.remove(teamPuzzleBoard.size() -1 );
-                }
-                teamPuzzleBoard.add(TeamPuzzleObjectDto.of(today, null, "puzzled" + (teamPuzzleBoard.size() + 1)));
-            }
-        }
-
         int totalPages = (int) Math.ceil((double) teamPuzzleBoard.size() / pageSize);
 
         int lastPageNumber = totalPages - 1;
@@ -177,6 +168,15 @@ public class ProjectServiceImpl implements ProjectService {
         }
 
         int puzzleCount = lastPageValues.size();
+
+        if (isReviewDay) {
+            if (!hasTodayReview) {
+                if (lastPageValues.size() > 0) {
+                    lastPageValues.remove(teamPuzzleBoard.size() -1 );
+                }
+                lastPageValues.add(TeamPuzzleObjectDto.of(today, null, "puzzled" + (lastPageValues.size() + 1)));
+            }
+        }
 
         for (int i = lastPageValues.size() + 1; i <= pageSize ; i++) {
             lastPageValues.add(TeamPuzzleObjectDto.of(null, null, ("puzzlee" + i)));
@@ -215,6 +215,8 @@ public class ProjectServiceImpl implements ProjectService {
         return ProjectRegisterResponseDto.of(inviteCode, savedProject.getId());
     }
 
+    @Override
+    @Transactional
     public List<ProjectTeamRankResponseDto> getTeamRank(Long projectId) {
         Project projectById = findProjectById(projectId);
         List<UserProject> findUserProjects = userProjectRepository.findAllByProjectIdOrderByReviewCountDesc(projectId);
@@ -298,18 +300,18 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     // 10자리의 UUID 생성
-    public static String makeShortUUID() {
+    private static String makeShortUUID() {
         UUID uuid = UUID.randomUUID();
         return parseToShortUUID(uuid.toString());
     }
 
     // 파라미터로 받은 값을 10자리의 UUID로 변환
-    public static String parseToShortUUID(String uuid) {
+    private static String parseToShortUUID(String uuid) {
         int l = ByteBuffer.wrap(uuid.getBytes()).getInt();
         return Integer.toString(l, 9);
     }
 
-    public String convertReviewCycleToString(String[] array) {
+    private String convertReviewCycleToString(String[] array) {
         if (array == null || array.length == 0) {
             return "";
         }
