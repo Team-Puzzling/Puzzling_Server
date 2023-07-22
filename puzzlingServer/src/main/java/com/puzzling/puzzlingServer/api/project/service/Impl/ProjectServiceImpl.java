@@ -172,7 +172,7 @@ public class ProjectServiceImpl implements ProjectService {
         if (isReviewDay) {
             if (!hasTodayReview) {
                 if (lastPageValues.size() > 0) {
-                    lastPageValues.remove(teamPuzzleBoard.size() -1 );
+                    lastPageValues.remove(lastPageValues.size() -1 );
                 }
                 lastPageValues.add(TeamPuzzleObjectDto.of(today, null, "puzzled" + (lastPageValues.size() + 1)));
             }
