@@ -1,6 +1,6 @@
 package com.puzzling.puzzlingServer.api.review.dto.response;
 
-import com.puzzling.puzzlingServer.api.review.domain.Review;
+import com.puzzling.puzzlingServer.api.review.dto.response.objectDto.ReviewDetailObjectDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,14 +13,10 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 @AllArgsConstructor
 public class ReviewDetailResponseDto {
-    private Long reviewId;
-    private String reviewDay;
-    private String reviewDate;
-    private Long reviewTemplateId;
-    private List<ReviewContentObjectDto> contents;
+    private String projectName;
+    private List<ReviewDetailObjectDto> reviews;
 
-    public static ReviewDetailResponseDto of (Long reviewId, String reviewDay, String reviewDate,
-                                                Long reviewTemplateId, List<ReviewContentObjectDto> contents) {
-        return new ReviewDetailResponseDto(reviewId, reviewDay, reviewDate, reviewTemplateId, contents);
+    public static ReviewDetailResponseDto of (String projectName, List<ReviewDetailObjectDto> reviews) {
+        return new ReviewDetailResponseDto(projectName, reviews);
     }
 }

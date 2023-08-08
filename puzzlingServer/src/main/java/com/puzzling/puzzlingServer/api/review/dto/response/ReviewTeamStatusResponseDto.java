@@ -1,5 +1,6 @@
 package com.puzzling.puzzlingServer.api.review.dto.response;
 
+import com.puzzling.puzzlingServer.api.review.dto.response.objectDto.ReviewTeamStatusObjectDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,13 +13,11 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 @AllArgsConstructor
 public class ReviewTeamStatusResponseDto {
-    private String reviewDay;
-    private String reviewDate;
-    private List<ReviewWriterObjectDto> reviewWriters;
-    private List<ReviewWriterObjectDto> nonReviewWriters;
+    private String projectName;
+    private List<ReviewTeamStatusObjectDto> memberReviews;
 
-    public static ReviewTeamStatusResponseDto of (String reviewDay, String reviewDate, List<ReviewWriterObjectDto> reviewWriters,
-                                            List<ReviewWriterObjectDto> nonReviewWriters) {
-        return new ReviewTeamStatusResponseDto(reviewDay, reviewDate, reviewWriters, nonReviewWriters);
+    public static ReviewTeamStatusResponseDto of (String projectName, List<ReviewTeamStatusObjectDto> memberReviews) {
+        return new ReviewTeamStatusResponseDto(projectName, memberReviews);
     }
+
 }

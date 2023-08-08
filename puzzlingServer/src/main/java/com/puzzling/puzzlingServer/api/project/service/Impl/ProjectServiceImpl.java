@@ -67,6 +67,9 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public ProjectOwnPuzzleResponseDto getMyPuzzles(Long memberId, Long projectId, String today) {
+
+        Project project = findProjectById(projectId);
+
         if (today.equals("") || today == null) {
             throw new BadRequestException(ErrorStatus.VALIDATION_REQUEST_MISSING_EXCEPTION.getMessage());
         }
@@ -110,7 +113,7 @@ public class ProjectServiceImpl implements ProjectService {
             }
         }
 
-        return ProjectOwnPuzzleResponseDto.of(mapperMyPuzzleObject(memberId, projectId), result,
+        return ProjectOwnPuzzleResponseDto.of(project.getName(), mapperMyPuzzleObject(memberId, projectId), result,
                 pageReviews.getTotalPages() - 1 < 0 ? 0 : pageReviews.getTotalPages() - 1 , isReviewDay, hasTodayReview);
     }
 
@@ -181,7 +184,7 @@ public class ProjectServiceImpl implements ProjectService {
         for (int i = lastPageValues.size() + 1; i <= pageSize ; i++) {
             lastPageValues.add(TeamPuzzleObjectDto.of(null, null, ("puzzlee" + i)));
         }
-        return ProjectTeamPuzzleResponseDto.of(ProjectMyPuzzleObjectDto.of(findProject.getName(), puzzleCount), lastPageValues,
+        return ProjectTeamPuzzleResponseDto.of(findProject.getName(), ProjectMyPuzzleObjectDto.of(findProject.getName(), puzzleCount), lastPageValues,
                 lastPageNumber < 0 ? 0 : lastPageNumber, isReviewDay, hasTodayReview);
     }
 
@@ -252,7 +255,7 @@ public class ProjectServiceImpl implements ProjectService {
                 .project(project)
                 .build();
         userProjectRepository.save(userProject);
-        return new ProjectJoinResponseDto(projectJoinRequestDto.getProjectId());
+        return new ProjectJoinResponseDto(projectJoinRequestDto.getProjectId(), project.getName());
     }
 
     @Override

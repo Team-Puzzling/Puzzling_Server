@@ -1,4 +1,4 @@
-package com.puzzling.puzzlingServer.api.review.dto.response;
+package com.puzzling.puzzlingServer.api.review.dto.response.objectDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

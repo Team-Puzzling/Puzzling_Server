@@ -16,6 +16,9 @@ import com.puzzling.puzzlingServer.api.review.dto.response.ReviewActionPlanRespo
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewAARRequestDto;
 
 import com.puzzling.puzzlingServer.api.review.dto.request.ReviewTILRequestDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.objectDto.ReviewContentObjectDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.objectDto.ReviewDetailObjectDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.objectDto.ReviewTeamStatusObjectDto;
 import com.puzzling.puzzlingServer.api.review.repository.ReviewRepository;
 import com.puzzling.puzzlingServer.api.review.service.ReviewService;
 
@@ -212,13 +215,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     @Transactional
-    public List<ReviewTeamStatusResponseDto> getTeamReviewStatus(Long projectId, String startDate, String endDate) {
+    public ReviewTeamStatusResponseDto getTeamReviewStatus(Long projectId, String startDate, String endDate) {
 
-        List<ReviewTeamStatusResponseDto> result = new ArrayList<>();
+        List<ReviewTeamStatusObjectDto> result = new ArrayList<>();
 
         List<UserProject> userProjects = userProjectRepository.findAllByProjectId(projectId);
-
-        String reviewCycle = findProjectById(projectId).getReviewCycle();
+        Project project = findProjectById(projectId);
+        String reviewCycle = project.getReviewCycle();
 
         List<String> reviewDates = generateReviewDates(startDate, endDate, reviewCycle);
 
@@ -237,18 +240,19 @@ public class ReviewServiceImpl implements ReviewService {
                 }
             }
 
-            result.add(ReviewTeamStatusResponseDto.of(getDayOfWeek(reviewDate), reviewDate, reviewWriters.isEmpty() ? null : reviewWriters, nonReviewWriters.isEmpty() ? null : nonReviewWriters));
+            result.add(ReviewTeamStatusObjectDto.of(getDayOfWeek(reviewDate), reviewDate, reviewWriters.isEmpty() ? null : reviewWriters, nonReviewWriters.isEmpty() ? null : nonReviewWriters));
 
         }
-        return result;
+        return ReviewTeamStatusResponseDto.of(project.getName(), result);
     }
 
     @Override
     @Transactional
-    public List<ReviewDetailResponseDto> getMyReviewDetail(Long memberId, Long projectId, String startDate, String endDate) {
-        List<ReviewDetailResponseDto> result = new ArrayList<>();
+    public ReviewDetailResponseDto getMyReviewDetail(Long memberId, Long projectId, String startDate, String endDate) {
+        List<ReviewDetailObjectDto> result = new ArrayList<>();
         findMemberById(memberId);
-        String reviewCycle = findProjectById(projectId).getReviewCycle();
+        Project project = findProjectById(projectId);
+        String reviewCycle = project.getReviewCycle();
 
         List<String> reviewDates = generateReviewDates(startDate, endDate, reviewCycle);
 
@@ -280,14 +284,14 @@ public class ReviewServiceImpl implements ReviewService {
                         throw new BadRequestException("올바르지 않은 리뷰 템플릿 이름: " + reviewTemplateName);
                 }
 
-                result.add(ReviewDetailResponseDto.of(reviewValue.getId(), getDayOfWeek(reviewDate), reviewDate,
+                result.add(ReviewDetailObjectDto.of(reviewValue.getId(), getDayOfWeek(reviewDate), reviewDate,
                         reviewValue.getReviewTemplate().getId(), reviewContent));
             } else {
-                result.add(ReviewDetailResponseDto.of(null, getDayOfWeek(reviewDate), reviewDate,
+                result.add(ReviewDetailObjectDto.of(null, getDayOfWeek(reviewDate), reviewDate,
                         null, null));
             }
         }
-        return result;
+        return ReviewDetailResponseDto.of(project.getName(), result);
     }
 
 
