@@ -11,8 +11,9 @@ import static lombok.AccessLevel.PRIVATE;
 @AllArgsConstructor
 public class ProjectJoinResponseDto {
     private Long projectId;
+    private String projectName;
 
-    public static ProjectJoinResponseDto of(Long projectId){
-        return new ProjectJoinResponseDto(projectId);
+    public static ProjectJoinResponseDto of(Long projectId, String projectName){
+        return new ProjectJoinResponseDto(projectId, projectName);
     }
 }

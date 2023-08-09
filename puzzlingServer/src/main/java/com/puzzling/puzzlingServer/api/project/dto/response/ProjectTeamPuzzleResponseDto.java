@@ -12,14 +12,15 @@ import static lombok.AccessLevel.PRIVATE;
 @NoArgsConstructor(access = PRIVATE)
 @AllArgsConstructor
 public class ProjectTeamPuzzleResponseDto {
+    private String projectName;
     private ProjectMyPuzzleObjectDto myPuzzle;
     private List<TeamPuzzleObjectDto> teamPuzzleBoard;
     private int teamPuzzleBoardCount;
     private Boolean isReviewDay;
     private Boolean hasTodayReview;
 
-    public static ProjectTeamPuzzleResponseDto of (ProjectMyPuzzleObjectDto projectMyPuzzleObjectDto, List<TeamPuzzleObjectDto> teamPuzzleBoard,
+    public static ProjectTeamPuzzleResponseDto of (String projectName, ProjectMyPuzzleObjectDto projectMyPuzzleObjectDto, List<TeamPuzzleObjectDto> teamPuzzleBoard,
                                                    int teamPuzzleBoardCount, Boolean isReviewDay, Boolean hasTodayReview) {
-        return new ProjectTeamPuzzleResponseDto (projectMyPuzzleObjectDto, teamPuzzleBoard, teamPuzzleBoardCount, isReviewDay, hasTodayReview);
+        return new ProjectTeamPuzzleResponseDto (projectName, projectMyPuzzleObjectDto, teamPuzzleBoard, teamPuzzleBoardCount, isReviewDay, hasTodayReview);
     }
 }

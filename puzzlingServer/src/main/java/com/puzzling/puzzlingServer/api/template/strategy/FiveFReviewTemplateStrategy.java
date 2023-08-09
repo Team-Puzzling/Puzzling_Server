@@ -1,6 +1,6 @@
 package com.puzzling.puzzlingServer.api.template.strategy;
 
-import com.puzzling.puzzlingServer.api.review.dto.response.ReviewContentObjectDto;
+import com.puzzling.puzzlingServer.api.review.dto.response.objectDto.ReviewContentObjectDto;
 import com.puzzling.puzzlingServer.api.template.domain.Review5F;
 
 import java.util.List;

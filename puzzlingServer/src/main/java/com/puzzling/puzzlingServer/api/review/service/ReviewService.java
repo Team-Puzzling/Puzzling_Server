@@ -22,10 +22,10 @@ public interface ReviewService {
 
     List<ReviewActionPlanResponseDto> getReviewActionPlans(Long memberId, Long projectId);
 
-    List<ReviewTeamStatusResponseDto> getTeamReviewStatus(Long projectId, String startDate, String endDate);
+    ReviewTeamStatusResponseDto getTeamReviewStatus(Long projectId, String startDate, String endDate);
 
     List<MyReviewProjectResponseDto> getMyReviewProjects(Long memberId, Long projectId);
 
-    List<ReviewDetailResponseDto> getMyReviewDetail(Long memberId, Long projectId, String startDate, String endDate);
+    ReviewDetailResponseDto getMyReviewDetail(Long memberId, Long projectId, String startDate, String endDate);
 
 }
